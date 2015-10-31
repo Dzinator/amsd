@@ -301,11 +301,11 @@ public class EmployeeProfile
   // line 45 "../../model.ump"
    public Availability getAvailability(Date date, int time){
     for(Availability avail : getAvailabilities()){
-          if(avail.getDate().equals(date) && avail.getTime() == time){
-              return avail;
-          }
-      }
-      return null;
+		  if(avail.getDate().equals(date) && avail.getTime() == time){
+			  return avail;
+		  }
+	  }
+	  return null;
   }
 
 }
