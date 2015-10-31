@@ -1,8 +1,10 @@
 package amsd.controller;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
+import amsd.model.Appointment;
 import amsd.model.AppointmentManagementSystem;
 import amsd.model.Availability;
 import amsd.model.DentistProfile;
@@ -80,7 +82,7 @@ public class Controller {
 		return null;
 	}
 	
-	public String setAvailability(String name, Date date, boolean available){
+	public String setAvailable(String name, Date date, boolean available){
 		Person p = getPerson(name);
 		if(p == null){
 			return "Person not found";
@@ -88,14 +90,109 @@ public class Controller {
 		
 		EmployeeProfile profile = p.getEmployeeProfile();
 		
-		List<Availability> 
+		boolean alreadyBookedOnDay = false;
+		boolean foundAvailability = false;
+		List<Availability> availOnDay = new ArrayList<>();
+		
 		for(Availability avail : profile.getAvailabilities()){
 			if(date.equals(avail.getDate())){
-				
+				foundAvailability = true;
+				availOnDay.add(avail);
+				if(avail.hasAppointment()){
+					alreadyBookedOnDay = true;
+				}
 			}
 		}
 		
+		if(alreadyBookedOnDay){
+			if(available){
+				return "Already set to available on that day";
+			} else {
+				return "Cannot cancel availability, patients already booked";
+			}
+		} else if(foundAvailability && !available){
+			//remove all availabilities
+			for(Availability avail : availOnDay){
+				avail.delete();
+			}
+		} else if(foundAvailability && available){
+			//nothing to do
+			return "availability already set";
+		} else{ //!foundAvailability
+			if(available){
+				int[] times = {8,9,10,11,13,14,15,16};
+				for(int time : times){
+					profile.addAvailability(date, time);
+				}
+			} else {
+				return "No availabilities added";
+			}
+		}
+		
+		
+			
+		
+		
 		return null;
+	}
+
+	public String makeDentistReservation(String name, Date date, int time) {
+		
+		PatientProfile patient = getPatient(name);
+		if(patient == null){
+			return "No patient profile found";
+		}
+		
+		String found = "No availabilities at this date and time";
+		for(DentistProfile dentist : ams.getDentistProfiles()){
+			Availability avail = dentist.getAvailability(date, time);
+			if(avail != null){
+				//make appointment
+				ams.addAppointment(new Appointment(date, time, patient, dentist, avail));
+				found = null;
+				break;
+			}
+		}
+		
+		return found;
+		
+		
+	}
+	
+	public String makeHygienistReservation(String name, Date date, int time) {
+		
+		PatientProfile patient = getPatient(name);
+		if(patient == null){
+			return "No patient profile found";
+		}
+		
+		String found = "No availabilities at this date and time";
+		for(HygienistProfile dentist : ams.getHygienistProfiles()){
+			Availability avail = dentist.getAvailability(date, time);
+			if(avail != null){
+				//make appointment
+				ams.addAppointment(new Appointment(date, time, patient, dentist, avail));
+				found = null;
+				break;
+			}
+		}
+		
+		return found;
+		
+		
+	}
+	
+	public String makeReservation(String name, Date date, int time, boolean dentist){
+		if(dentist){
+			return makeDentistReservation(name, date, time);
+		} else {
+			return makeHygienistReservation(name, date, time);
+		}
+	}
+
+	private PatientProfile getPatient(String name) {
+		Person p = getPerson(name);
+		return p.getPatientProfile();
 	}
 
 

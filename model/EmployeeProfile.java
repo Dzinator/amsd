@@ -107,9 +107,9 @@ public class EmployeeProfile
     return 0;
   }
 
-  public Appointment addAppointment(Date aDate, int aTime, PatientProfile aPatientProfile)
+  public Appointment addAppointment(Date aDate, int aTime, PatientProfile aPatientProfile, Availability aAvailability)
   {
-    return new Appointment(aDate, aTime, aPatientProfile, this);
+    return new Appointment(aDate, aTime, aPatientProfile, this, aAvailability);
   }
 
   public boolean addAppointment(Appointment aAppointment)
@@ -296,6 +296,16 @@ public class EmployeeProfile
     {
       existingPerson.setEmployeeProfile(null);
     }
+  }
+
+  // line 45 "../../model.ump"
+   public Availability getAvailability(Date date, int time){
+    for(Availability avail : getAvailabilities()){
+		  if(avail.getDate().equals(date) && avail.getTime() == time){
+			  return avail;
+		  }
+	  }
+	  return null;
   }
 
 }

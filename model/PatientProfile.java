@@ -92,9 +92,9 @@ public class PatientProfile
     return 0;
   }
 
-  public Appointment addAppointment(Date aDate, int aTime, EmployeeProfile aEmployeeProfile)
+  public Appointment addAppointment(Date aDate, int aTime, EmployeeProfile aEmployeeProfile, Availability aAvailability)
   {
-    return new Appointment(aDate, aTime, this, aEmployeeProfile);
+    return new Appointment(aDate, aTime, this, aEmployeeProfile, aAvailability);
   }
 
   public boolean addAppointment(Appointment aAppointment)
