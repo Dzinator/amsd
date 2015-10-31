@@ -9,13 +9,13 @@ import java.util.Iterator;
 import java.util.Properties;
 
 import javax.swing.*;
-/*
+
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.SqlDateModel;
-*/
-//import amsd.controller.*;
-//import amsd.model.*;
+
+import amsd.controller.*;
+import amsd.model.*;
 
 public class BookingPage extends JFrame {
 
@@ -23,33 +23,42 @@ public class BookingPage extends JFrame {
 	
 	// UI elements
 	private JLabel errorMessage;
-	private JComboBox<String> participantList;
-	private JLabel participantLabel;
-	private JComboBox<String> eventList;
-	private JLabel eventLabel;
-	private JButton registerButton;
-	private JTextField participantNameTextField;
-	private JLabel participantNameLabel;
-	private JButton addParticipantButton;
-	private JTextField eventNameTextField;
-	private JLabel eventNameLabel;
-	private JDatePickerImpl eventDatePicker;
-	private JLabel eventDateLabel;
+	private JComboBox<String> patientList;
+	private JLabel patientLabel;
+	private JButton bookButton;		//book button
+	private JTextField personNameTextField;
+	private JLabel personNameLabel;
+	private JButton addPersonButton;	//add button
+	private JTextField personPhoneTextField;
+	private JLabel personPhoneLabel;
+	
+	private JComboBox<String> visitTypeList;
+	private JLabel visitTypeLabel;
+	private JComboBox<String> visitTimeList;
+	private JLabel visitTimeLabel;
+	private JComboBox<String> personTypeList;
+	private JLabel personTypeLabel;
+	
+	
+	private JDatePickerImpl datePicker;
+	private JLabel dateLabel;
+	/*
 	private JSpinner startTimeSpinner;
 	private JLabel startTimeLabel;
 	private JSpinner endTimeSpinner;
 	private JLabel endTimeLabel;
 	private JButton addEventButton;
+	*/
 	
 	// data elements
 	private String error = null;
-	private Integer selectedParticipant = -1;
-	private HashMap<Integer, Participant> participants;
-	private Integer selectedEvent = -1;
-	private HashMap<Integer, Event> events;
+	private Integer selectedPatient = -1;
+	private HashMap<Integer, PatientProfile> patients;
+	private Integer selectedType = -1;
+	//private HashMap<Integer, Event> events;
 	
 	/** Creates new form EventRegistrationPage */
-	public EventRegistrationPage() {
+	public BookingPage() {
 		initComponents();
 		refreshData();
 	}
@@ -61,34 +70,40 @@ public class BookingPage extends JFrame {
 		errorMessage = new JLabel();
 		errorMessage.setForeground(Color.RED);
 		
-		// elements for registration
-		participantList = new JComboBox<String>(new String[0]);
-		participantList.addActionListener(new java.awt.event.ActionListener() {
+		// elements for booking
+		patientList = new JComboBox<String>(new String[0]);
+		patientList.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 		        JComboBox<String> cb = (JComboBox<String>) evt.getSource();
-		        selectedParticipant = cb.getSelectedIndex();
+		        selectedPatient = cb.getSelectedIndex();
 			}
 		});
-		participantLabel = new JLabel();
-		eventList = new JComboBox<String>(new String[0]);
-		eventList.addActionListener(new java.awt.event.ActionListener() {
+		patientLabel = new JLabel();
+		
+		//visit types (for employees and patients
+		String[] types = {"available", "unavailable", "checkup", "cleanup"};
+		
+		visitTypeList = new JComboBox<String>(types);
+		visitTypeList.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 		        JComboBox<String> cb = (JComboBox<String>) evt.getSource();
-		        selectedEvent = cb.getSelectedIndex();
+		        selectedType = cb.getSelectedIndex();
 			}
 		});
-		eventLabel = new JLabel();
-
-		registerButton = new JButton();
+		visitTypeLabel = new JLabel();
 		
-		// elements for participant
-		participantNameTextField = new JTextField();
-		participantNameLabel = new JLabel();
-		addParticipantButton = new JButton();
+		//TODO other comboLists
 		
-		// elements for event
-		eventNameTextField = new JTextField();
-		eventNameLabel = new JLabel();
+		
+		bookButton = new JButton();
+		
+		// elements for adding a person
+		personNameTextField = new JTextField();
+		personNameLabel = new JLabel();
+		personPhoneTextField = new JTextField();
+		personPhoneLabel = new JLabel();
+		
+		addPersonButton = new JButton();
 		
 		SqlDateModel model = new SqlDateModel();
 		Properties p = new Properties();
@@ -96,9 +111,10 @@ public class BookingPage extends JFrame {
 		p.put("text.month", "Month");
 		p.put("text.year", "Year");
 		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
-		eventDatePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+		datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
 		
-		eventDateLabel = new JLabel();
+		dateLabel = new JLabel();
+		/*
 		startTimeSpinner = new JSpinner( new SpinnerDateModel() );
 		JSpinner.DateEditor startTimeEditor = new JSpinner.DateEditor(startTimeSpinner, "HH:mm");
 		startTimeSpinner.setEditor(startTimeEditor); // will only show the current time
@@ -108,30 +124,32 @@ public class BookingPage extends JFrame {
 		endTimeSpinner.setEditor(endTimeEditor); // will only show the current time
 		endTimeLabel = new JLabel();
 		addEventButton = new JButton();
+		*/
 
 		// global settings and listeners
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		setTitle("Event Registration");
+		setTitle("Booking");
 
-		participantLabel.setText("Select Participant:");
-		eventLabel.setText("Select Event:");
-		registerButton.setText("Register");
-		registerButton.addActionListener(new java.awt.event.ActionListener() {
+		patientLabel.setText("Select Person:");
+		visitTypeLabel.setText("Select Action:");
+		bookButton.setText("Schedule");
+		bookButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				registerButtonActionPerformed(evt);
+				bookButtonActionPerformed(evt);
 			}
 		});
 
-		participantNameLabel.setText("Name:");
-		addParticipantButton.setText("Add Participant");
-		addParticipantButton.addActionListener(new java.awt.event.ActionListener() {
+		personNameLabel.setText("Name:");
+		addPersonButton.setText("Add Participant");
+		addPersonButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				addParticipantButtonActionPerformed(evt);
+				addPersonButtonActionPerformed(evt);
 			}
 		});
 
-		eventNameLabel.setText("Name:");
-		eventDateLabel.setText("Date:");
+		personPhoneLabel.setText("Phone:");
+		dateLabel.setText("Date:");
+		/*
 		startTimeLabel.setText("Start Time:");
 		endTimeLabel.setText("End time:");
 		addEventButton.setText("Add Event");
@@ -140,6 +158,7 @@ public class BookingPage extends JFrame {
 				addEventButtonActionPerformed(evt);
 			}
 		});
+		*/
 		
 		// layout
 		GroupLayout layout = new GroupLayout(getContentPane());
@@ -151,99 +170,96 @@ public class BookingPage extends JFrame {
 				.addComponent(errorMessage)
 				.addGroup(layout.createSequentialGroup()
 						.addGroup(layout.createParallelGroup()
-								.addComponent(participantLabel)
-								.addComponent(registerButton)
-								.addComponent(participantNameLabel))
+								.addComponent(patientLabel)
+								.addComponent(dateLabel)
+								.addComponent(personNameLabel)
+								.addComponent(personPhoneLabel))
 						.addGroup(layout.createParallelGroup()
-								.addComponent(participantList)
-								.addComponent(participantNameTextField, 200, 200, 400)
-								.addComponent(addParticipantButton))
+								.addComponent(patientList)
+								.addComponent(datePicker)
+								.addComponent(personNameTextField, 200, 200, 400)
+								.addComponent(personPhoneTextField, 200, 200, 400))
 						.addGroup(layout.createParallelGroup()
-								.addComponent(eventLabel)
-								.addComponent(eventNameLabel)
-								.addComponent(eventDateLabel)
-								.addComponent(startTimeLabel)
-								.addComponent(endTimeLabel))
+								.addComponent(visitTypeLabel)
+								.addComponent(visitTimeLabel)
+								.addComponent(personTypeLabel))
 						.addGroup(layout.createParallelGroup()
-								.addComponent(eventList)
-								.addComponent(eventNameTextField, 200, 200, 400)
-								.addComponent(eventDatePicker)
-								.addComponent(startTimeSpinner)
-								.addComponent(endTimeSpinner)
-								.addComponent(addEventButton)))
+								.addComponent(visitTypeList)
+								.addComponent(visitTimeList)
+								.addComponent(bookButton)
+								.addComponent(personTypeList)
+								.addComponent(addPersonButton)))
 				);
 
-		layout.linkSize(SwingConstants.HORIZONTAL, new java.awt.Component[] {registerButton, participantLabel});
-		layout.linkSize(SwingConstants.HORIZONTAL, new java.awt.Component[] {addParticipantButton, participantNameTextField});
-		layout.linkSize(SwingConstants.HORIZONTAL, new java.awt.Component[] {addEventButton, eventNameTextField});
+		layout.linkSize(SwingConstants.HORIZONTAL, new java.awt.Component[] {bookButton, patientLabel});
+		layout.linkSize(SwingConstants.HORIZONTAL, new java.awt.Component[] {addPersonButton, personNameTextField});
+		layout.linkSize(SwingConstants.HORIZONTAL, new java.awt.Component[] {personPhoneTextField});
 		
 		layout.setVerticalGroup(
 				layout.createSequentialGroup()
 				.addComponent(errorMessage)
 				.addGroup(layout.createParallelGroup()
-						.addComponent(participantLabel)
-						.addComponent(participantList)
-						.addComponent(eventLabel)
-						.addComponent(eventList))
-				.addComponent(registerButton)
+						.addComponent(patientLabel)
+						.addComponent(patientList)
+						.addComponent(visitTypeLabel)
+						.addComponent(visitTypeList))
 				.addGroup(layout.createParallelGroup()
-						.addComponent(participantNameLabel)
-						.addComponent(participantNameTextField)
-						.addComponent(eventNameLabel)
-						.addComponent(eventNameTextField))		
+						.addComponent(dateLabel)
+						.addComponent(datePicker)
+						.addComponent(visitTimeLabel)
+						.addComponent(visitTimeList))
+				.addComponent(bookButton)		
 				.addGroup(layout.createParallelGroup()
-						.addComponent(eventDateLabel)
-						.addComponent(eventDatePicker))
+						.addComponent(personNameLabel)
+						.addComponent(personNameTextField)
+						.addComponent(personTypeLabel)
+						.addComponent(personTypeList))
 				.addGroup(layout.createParallelGroup()
-						.addComponent(startTimeLabel)
-						.addComponent(startTimeSpinner))
-				.addGroup(layout.createParallelGroup()
-						.addComponent(endTimeLabel)								
-						.addComponent(endTimeSpinner))
-				.addGroup(layout.createParallelGroup()
-						.addComponent(addParticipantButton)
-						.addComponent(addEventButton))
+						.addComponent(personPhoneLabel)
+						.addComponent(personPhoneTextField))
+				.addGroup(layout.createParallelGroup()						
+						.addComponent(addPersonButton))
 				);
 		
 		pack();
 	}
 
 	private void refreshData() {
-		RegistrationManager rm = RegistrationManager.getInstance();
+		AppointmentManagementSystem amsd = AppointmentManagementSystem.getInstance();
 		// error
 		errorMessage.setText(error);
 		if (error == null || error.length() == 0) {
 			// participant list
-			participants = new HashMap<Integer, Participant>();
-			participantList.removeAllItems();
-			Iterator<Participant> pIt = rm.getParticipants().iterator();
+			patients = new HashMap<Integer, PatientProfile>();
+			patientList.removeAllItems();
+			Iterator<Participant> pIt = amsd.getParticipants().iterator();
 			Integer index = 0;
 			while (pIt.hasNext()) {
 				Participant p = pIt.next();
-				participants.put(index, p);
-				participantList.addItem(p.getName());
+				patients.put(index, p);
+				patientList.addItem(p.getName());
 				index++;
 			}
-			selectedParticipant = -1;
-			participantList.setSelectedIndex(selectedParticipant);
+			selectedPatient = -1;
+			patientList.setSelectedIndex(selectedPatient);
 			// event list
 			events = new HashMap<Integer, Event>();
-			eventList.removeAllItems();
-			Iterator<Event> eIt = rm.getEvents().iterator();
+			visitTypeList.removeAllItems();
+			Iterator<Event> eIt = amsd.getEvents().iterator();
 			index = 0;
 			while (eIt.hasNext()) {
 				Event e = eIt.next();
 				events.put(index, e);
-				eventList.addItem(e.getName());
+				visitTypeList.addItem(e.getName());
 				index++;
 			}
 			selectedEvent = -1;
-			eventList.setSelectedIndex(selectedEvent);
+			visitTypeList.setSelectedIndex(selectedEvent);
 			// participant
-			participantNameTextField.setText("");
+			personNameTextField.setText("");
 			// event
-			eventNameTextField.setText("");
-			eventDatePicker.getModel().setValue(null);
+			personPhoneTextField.setText("");
+			datePicker.getModel().setValue(null);
 			startTimeSpinner.setValue(new Date()); 
 			endTimeSpinner.setValue(new Date());
 		}
@@ -252,10 +268,10 @@ public class BookingPage extends JFrame {
 		pack();
 	}
 
-	private void addParticipantButtonActionPerformed(java.awt.event.ActionEvent evt) {
+	private void addPersonButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		// call the controller
 		EventRegistrationController erc = new EventRegistrationController();
-		error = erc.createParticipant(participantNameTextField.getText());
+		error = erc.createParticipant(personNameTextField.getText());
 		// update visuals
 		refreshData();
 	}
@@ -272,14 +288,14 @@ public class BookingPage extends JFrame {
 		calendar.setTime((Date) endTimeSpinner.getValue());
 		calendar.set(2000, 1, 1);
 		Time endTime = new Time(calendar.getTime().getTime());
-		error = erc.createEvent(eventNameTextField.getText(), (java.sql.Date) eventDatePicker.getModel().getValue(), startTime, endTime);
+		error = erc.createEvent(personPhoneTextField.getText(), (java.sql.Date) datePicker.getModel().getValue(), startTime, endTime);
 		// update visuals
 		refreshData();
 	}
 
-	private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {
+	private void bookButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		error = "";
-		if (selectedParticipant < 0)
+		if (selectedPatient < 0)
 			error = error + "Participant needs to be selected for registration! ";
 		if (selectedEvent < 0)
 			error = error + "Event needs to be selected for registration!";
@@ -287,7 +303,7 @@ public class BookingPage extends JFrame {
 		if (error.length() == 0) {
 			// call the controller
 			EventRegistrationController erc = new EventRegistrationController();
-			error = erc.register(participants.get(selectedParticipant), events.get(selectedEvent));
+			error = erc.register(patients.get(selectedPatient), events.get(selectedEvent));
 		}
 		// update visuals
 		refreshData();			

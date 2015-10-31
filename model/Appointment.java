@@ -4,7 +4,7 @@
 package amsd.model;
 import java.sql.Date;
 
-// line 68 "../../model.ump"
+// line 77 "../../model.ump"
 public class Appointment
 {
 
@@ -17,18 +17,19 @@ public class Appointment
   private int time;
 
   //Appointment State Machines
-  enum Sm { Available, Booked, Canceled, Attended, Missed, FeePaid }
+  enum Sm { Booked, Canceled, Attended, Missed, FeePaid }
   private Sm sm;
 
   //Appointment Associations
   private PatientProfile patientProfile;
   private EmployeeProfile employeeProfile;
+  private Availability availability;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Appointment(Date aDate, int aTime, PatientProfile aPatientProfile, EmployeeProfile aEmployeeProfile)
+  public Appointment(Date aDate, int aTime, PatientProfile aPatientProfile, EmployeeProfile aEmployeeProfile, Availability aAvailability)
   {
     date = aDate;
     time = aTime;
@@ -42,7 +43,12 @@ public class Appointment
     {
       throw new RuntimeException("Unable to create appointment due to employeeProfile");
     }
-    setSm(Sm.Available);
+    boolean didAddAvailability = setAvailability(aAvailability);
+    if (!didAddAvailability)
+    {
+      throw new RuntimeException("Unable to create appointment due to availability");
+    }
+    setSm(Sm.Booked);
   }
 
   //------------------------
@@ -84,24 +90,6 @@ public class Appointment
   public Sm getSm()
   {
     return sm;
-  }
-
-  public boolean book()
-  {
-    boolean wasEventProcessed = false;
-    
-    Sm aSm = sm;
-    switch (aSm)
-    {
-      case Available:
-        setSm(Sm.Booked);
-        wasEventProcessed = true;
-        break;
-      default:
-        // Other states do respond to this event
-    }
-
-    return wasEventProcessed;
   }
 
   public boolean cancel(Date today)
@@ -195,6 +183,11 @@ public class Appointment
     return employeeProfile;
   }
 
+  public Availability getAvailability()
+  {
+    return availability;
+  }
+
   public boolean setPatientProfile(PatientProfile aPatientProfile)
   {
     boolean wasSet = false;
@@ -233,6 +226,34 @@ public class Appointment
     return wasSet;
   }
 
+  public boolean setAvailability(Availability aNewAvailability)
+  {
+    boolean wasSet = false;
+    if (aNewAvailability == null)
+    {
+      //Unable to setAvailability to null, as appointment must always be associated to a availability
+      return wasSet;
+    }
+    
+    Appointment existingAppointment = aNewAvailability.getAppointment();
+    if (existingAppointment != null && !equals(existingAppointment))
+    {
+      //Unable to setAvailability, the current availability already has a appointment, which would be orphaned if it were re-assigned
+      return wasSet;
+    }
+    
+    Availability anOldAvailability = availability;
+    availability = aNewAvailability;
+    availability.setAppointment(this);
+
+    if (anOldAvailability != null)
+    {
+      anOldAvailability.setAppointment(null);
+    }
+    wasSet = true;
+    return wasSet;
+  }
+
   public void delete()
   {
     PatientProfile placeholderPatientProfile = patientProfile;
@@ -241,6 +262,12 @@ public class Appointment
     EmployeeProfile placeholderEmployeeProfile = employeeProfile;
     this.employeeProfile = null;
     placeholderEmployeeProfile.removeAppointment(this);
+    Availability existingAvailability = availability;
+    availability = null;
+    if (existingAvailability != null)
+    {
+      existingAvailability.setAppointment(null);
+    }
   }
 
 
@@ -251,14 +278,15 @@ public class Appointment
             "time" + ":" + getTime()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "date" + "=" + (getDate() != null ? !getDate().equals(this)  ? getDate().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "patientProfile = "+(getPatientProfile()!=null?Integer.toHexString(System.identityHashCode(getPatientProfile())):"null") + System.getProperties().getProperty("line.separator") +
-            "  " + "employeeProfile = "+(getEmployeeProfile()!=null?Integer.toHexString(System.identityHashCode(getEmployeeProfile())):"null")
+            "  " + "employeeProfile = "+(getEmployeeProfile()!=null?Integer.toHexString(System.identityHashCode(getEmployeeProfile())):"null") + System.getProperties().getProperty("line.separator") +
+            "  " + "availability = "+(getAvailability()!=null?Integer.toHexString(System.identityHashCode(getAvailability())):"null")
      + outputString;
   }  
   //------------------------
   // DEVELOPER CODE - PROVIDED AS-IS
   //------------------------
   
-  // line 71 ../../model.ump
+  // line 80 ../../model.ump
   final long twoDaysInMillis = 1000*60*60*24*2 ;
 
   
