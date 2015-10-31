@@ -1,0 +1,133 @@
+namespace amsd.model;
+
+class AppointmentManagementSystem
+
+{
+     singleton;
+     1 -> 0..* Person;
+     1 -> 0..* Appointment;
+     1 -> 0..* PatientProfile;
+     1 -> 0..* DentistProfile;
+     1 -> 0..* HygienistProfile;
+}
+
+ 
+
+ 
+
+class Person {
+     name;
+     Integer phoneNumber;
+     1 -- 0..1 PatientProfile;
+     1 -- 0..1 EmployeeProfile;
+}
+
+ 
+
+class PatientProfile
+
+{
+     Integer missedAppointments;
+     1 -- * Appointment;
+
+}
+
+ 
+
+class EmployeeProfile
+
+{
+
+     1 -- * Appointment;
+     1 -- * Availability;
+     
+       public Availability getAvailability(Date date, int time){
+    for(Availability avail : getAvailabilities()){
+		  if(avail.getDate().equals(date) && avail.getTime() == time){
+			  return avail;
+		  }
+	  }
+	  return null;
+  }
+
+}
+
+ 
+
+class DentistProfile
+
+{
+
+     isA EmployeeProfile;
+
+}
+
+ 
+
+class HygienistProfile
+
+{
+
+     isA EmployeeProfile;
+
+}
+
+ 
+
+class Appointment
+
+{
+	 final long twoDaysInMillis = 1000*60*60*24*2;
+     Date date;
+     Integer time;
+
+  
+
+    sm{
+
+      Booked {
+          cancel(Date today) [date - today.getTime() >= twoDaysInMillis] -> Canceled;
+          miss -> Missed;
+          attend -> Attended;
+      }
+
+      Canceled {
+      }
+
+      Attended {
+      }
+
+      Missed {
+        payfee -> FeePaid;
+
+      }
+
+      FeePaid {
+      }
+
+    }
+
+}
+
+ 
+
+ 
+
+class Availability
+
+{
+
+ sm{
+      Available{
+        book(Appointment a) /{setAppointment(a);}-> Booked ;
+      }
+
+      Booked {
+      	cancel -> Available;
+      }
+      
+   }
+     1 -- 0..1 Appointment;
+     Date date;
+     Integer time;
+}
