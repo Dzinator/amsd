@@ -89,6 +89,9 @@ public class Controller {
 		}
 		
 		EmployeeProfile profile = p.getEmployeeProfile();
+		if(profile == null){
+			return "No employee profile";
+		}
 		
 		boolean alreadyBookedOnDay = false;
 		boolean foundAvailability = false;
@@ -110,14 +113,16 @@ public class Controller {
 			} else {
 				return "Cannot cancel availability, patients already booked";
 			}
-		} else if(foundAvailability && !available){
+		} else if(foundAvailability){
+			if(available){
+				//nothing to do
+				return "availability already set";
+			} else {
 			//remove all availabilities
-			for(Availability avail : availOnDay){
-				avail.delete();
+				for(Availability avail : availOnDay){
+					avail.delete();
+				}
 			}
-		} else if(foundAvailability && available){
-			//nothing to do
-			return "availability already set";
 		} else{ //!foundAvailability
 			if(available){
 				int[] times = {8,9,10,11,13,14,15,16};
