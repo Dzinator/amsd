@@ -159,7 +159,7 @@ public class BookingPage extends JFrame {
 		});
 
 		personNameLabel.setText("Name:");
-		addPersonButton.setText("Add Participant");
+		addPersonButton.setText("Add Person");
 		addPersonButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				addPersonButtonActionPerformed(evt);
@@ -172,6 +172,10 @@ public class BookingPage extends JFrame {
 		visitTimeLabel.setText("Time:");
 		personTypeLabel.setText("Person Type:");
 
+		//lines for sections
+		JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
+		JSeparator separator2 = new JSeparator(SwingConstants.HORIZONTAL);
+		
 		// layout
 		GroupLayout layout = new GroupLayout(getContentPane());
 		getContentPane().setLayout(layout);
@@ -180,16 +184,20 @@ public class BookingPage extends JFrame {
 		layout.setHorizontalGroup(layout
 				.createParallelGroup()
 				.addComponent(errorMessage)
+				.addComponent(separator)
+				.addComponent(separator2)
 				.addGroup(
 						layout.createSequentialGroup()
 								.addGroup(
 										layout.createParallelGroup()
+												.addComponent(personTypeLabel)
 												.addComponent(patientLabel)
 												.addComponent(dateLabel)
 												.addComponent(personNameLabel)
 												.addComponent(personPhoneLabel))
 								.addGroup(
 										layout.createParallelGroup()
+												.addComponent(personTypeList)
 												.addComponent(personList)
 												.addComponent(datePicker)
 												.addComponent(
@@ -201,26 +209,28 @@ public class BookingPage extends JFrame {
 								.addGroup(
 										layout.createParallelGroup()
 												.addComponent(visitTypeLabel)
-												.addComponent(visitTimeLabel)
-												.addComponent(personTypeLabel))
+												.addComponent(visitTimeLabel))
 								.addGroup(
 										layout.createParallelGroup()
 												.addComponent(visitTypeList)
 												.addComponent(visitTimeList)
 												.addComponent(bookButton)
-												.addComponent(personTypeList)
 												.addComponent(addPersonButton))));
 
 		layout.linkSize(SwingConstants.HORIZONTAL, new java.awt.Component[] {
 				bookButton, patientLabel });
 		layout.linkSize(SwingConstants.HORIZONTAL, new java.awt.Component[] {
 				addPersonButton, personNameTextField });
-		layout.linkSize(SwingConstants.HORIZONTAL,
+		layout.linkSize(SwingConstants.VERTICAL,
 				new java.awt.Component[] { personPhoneTextField });
 
 		layout.setVerticalGroup(layout
 				.createSequentialGroup()
 				.addComponent(errorMessage)
+				.addGroup(
+						layout.createParallelGroup().addComponent(personTypeLabel)
+								.addComponent(personTypeList))
+				.addComponent(separator)
 				.addGroup(
 						layout.createParallelGroup().addComponent(patientLabel)
 								.addComponent(personList)
@@ -232,12 +242,11 @@ public class BookingPage extends JFrame {
 								.addComponent(visitTimeLabel)
 								.addComponent(visitTimeList))
 				.addComponent(bookButton)
+				.addComponent(separator2)
 				.addGroup(
 						layout.createParallelGroup()
 								.addComponent(personNameLabel)
-								.addComponent(personNameTextField)
-								.addComponent(personTypeLabel)
-								.addComponent(personTypeList))
+								.addComponent(personNameTextField))
 				.addGroup(
 						layout.createParallelGroup()
 								.addComponent(personPhoneLabel)
@@ -384,7 +393,6 @@ public class BookingPage extends JFrame {
 		if (error.length() == 0) {
 			// call the controller
 			Controller c = new Controller();
-			// TODO handle different requests
 			java.sql.Date date = (java.sql.Date) datePicker.getModel()
 					.getValue();
 			int time = 9;
