@@ -6,7 +6,7 @@ import amsd.model.*;
 
 public class PersistenceAMSD {
 
-	private static void initializeXStream() {
+	public static void initializeXStream() {
 		PersistenceXStream.setFilename("amsd.xml");
 		
 		PersistenceXStream.setAlias("appointment", Appointment.class);

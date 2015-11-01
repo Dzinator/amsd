@@ -166,7 +166,7 @@ public class Controller {
 		
 	}
 	
-	public String makeHygienistReservation(String name, Date date, int time) {
+	public String makeHygienistAppointment(String name, Date date, int time) {
 		
 		PatientProfile patient = getPatient(name);
 		if(patient == null){
@@ -195,11 +195,11 @@ public class Controller {
 		
 	}
 	
-	public String makeReservation(String name, Date date, int time, boolean dentist){
+	public String makeAppointment(String name, Date date, int time, boolean dentist){
 		if(dentist){
 			return makeDentistAppointment(name, date, time);
 		} else {
-			return makeHygienistReservation(name, date, time);
+			return makeHygienistAppointment(name, date, time);
 		}
 	}
 
@@ -264,5 +264,16 @@ public class Controller {
 		
 	}
 
+	
+	public String updatePhoneNumber(String name, int number){
+		Person person = getPerson(name);
+		if(person == null){
+			return "Person not found";
+		}
+		
+		person.setPhoneNumber(number);
+		
+		return null;
+	}
 
 }
