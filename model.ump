@@ -30,6 +30,33 @@ class PatientProfile
      Integer missedAppointments;
      1 -- * Appointment;
 
+	public Appointment getAppointment(Date date, int time){
+	    for(Appointment app : getAppointments()){
+		  if(app.getDate().equals(date) && app.getTime() == time){
+			  return app;
+		  }
+		}
+	  return null;
+  	}
+  	
+  	sm{
+  		Allowed{
+  			miss (Appointment app) [missedAppointments >= 2] ->  NotAllowed;
+  		}
+  		NotAllowed{
+  			payFee (Appointment app) [missedAppointments < 2] -> Allowed;
+  		}
+  	}
+  	
+  		before miss {
+  			missedAppointments++; 
+  			app.miss();
+  		};
+  		before payFee {
+  			missedAppointments--;
+  			app.payfee();
+  		};
+
 }
 
  
@@ -41,14 +68,23 @@ class EmployeeProfile
      1 -- * Appointment;
      1 -- * Availability;
      
-       public Availability getAvailability(Date date, int time){
-    for(Availability avail : getAvailabilities()){
+    public Availability getAvailability(Date date, int time){
+	    for(Availability avail : getAvailabilities()){
 		  if(avail.getDate().equals(date) && avail.getTime() == time){
 			  return avail;
 		  }
-	  }
+		}
 	  return null;
-  }
+  	}
+  	
+  	public Appointment getAppointment(Date date, int time){
+	    for(Appointment app : getAppointments()){
+		  if(app.getDate().equals(date) && app.getTime() == time){
+			  return app;
+		  }
+		}
+	  return null;
+  	}
 
 }
 
@@ -86,12 +122,16 @@ class Appointment
     sm{
 
       Booked {
-          cancel(Date today) [date - today.getTime() >= twoDaysInMillis] -> Canceled;
+          cancel(long today) [date - today >= twoDaysInMillis] -> Canceled;
           miss -> Missed;
           attend -> Attended;
       }
 
       Canceled {
+      	entry / {
+	  		this.getAvailability().cancel();
+      		this.delete();
+      	}
       }
 
       Attended {
@@ -106,6 +146,19 @@ class Appointment
       }
 
     }
+   /* 
+     @Override
+  public boolean equals(Object o){
+	  if(!(o instanceof Appointment)){
+		  return false;
+	  }
+	  
+	  Appointment a = (Appointment) o;
+	  return a.getDate().equals(this.getDate()) && a.getTime() == this.getTime() &&
+			  a.getEmployeeProfile().equals(this.getEmployeeProfile()) &&
+			  a.getPatientProfile().equals(this.getPatientProfile());
+  }
+  */
 
 }
 

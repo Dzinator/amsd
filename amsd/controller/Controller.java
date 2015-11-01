@@ -136,19 +136,26 @@ public class Controller {
 		return null;
 	}
 
-	public String makeDentistReservation(String name, Date date, int time) {
+	public String makeDentistAppointment(String name, Date date, int time) {
 		
 		PatientProfile patient = getPatient(name);
 		if(patient == null){
 			return "No patient profile found";
 		}
 		
+		if(!patient.getSmFullName().equals("Allowed")){
+			return "Cannot make appointment. Patient has outstanding payments.";
+		}
+		
+		
 		String found = "No availabilities at this date and time";
 		for(DentistProfile dentist : ams.getDentistProfiles()){
 			Availability avail = dentist.getAvailability(date, time);
-			if(avail != null){
+			if(avail != null && avail.getSmFullName().equals("Available")){
 				//make appointment
-				ams.addAppointment(new Appointment(date, time, patient, dentist, avail));
+				Appointment app = new Appointment(date, time, patient, dentist, avail);
+				ams.addAppointment(app);
+				avail.book(app);
 				found = null;
 				break;
 			}
@@ -166,12 +173,18 @@ public class Controller {
 			return "No patient profile found";
 		}
 		
+		if(!patient.getSmFullName().equals("Allowed")){
+			return "Cannot make appointment. Patient has outstanding payments.";
+		}
+		
 		String found = "No availabilities at this date and time";
-		for(HygienistProfile dentist : ams.getHygienistProfiles()){
-			Availability avail = dentist.getAvailability(date, time);
+		for(HygienistProfile hygienist : ams.getHygienistProfiles()){
+			Availability avail = hygienist.getAvailability(date, time);
 			if(avail != null){
 				//make appointment
-				ams.addAppointment(new Appointment(date, time, patient, dentist, avail));
+				Appointment appoint = new Appointment(date, time, patient, hygienist, avail);
+				ams.addAppointment(appoint);
+				avail.book(appoint);
 				found = null;
 				break;
 			}
@@ -184,7 +197,7 @@ public class Controller {
 	
 	public String makeReservation(String name, Date date, int time, boolean dentist){
 		if(dentist){
-			return makeDentistReservation(name, date, time);
+			return makeDentistAppointment(name, date, time);
 		} else {
 			return makeHygienistReservation(name, date, time);
 		}
@@ -193,6 +206,62 @@ public class Controller {
 	private PatientProfile getPatient(String name) {
 		Person p = getPerson(name);
 		return p.getPatientProfile();
+	}
+
+	public String cancelAppointment(String name, Date date, int time) {
+		PatientProfile patient = getPatient(name);
+		if(patient == null){
+			return "No patient profile found";
+		}
+		
+		Appointment cancelApp = patient.getAppointment(date, time);
+		if(cancelApp != null){
+			cancelApp.cancel(System.currentTimeMillis());
+		} else {
+			return "Appointment not found";
+		}
+		
+		
+		
+		return null;
+	}
+
+	public String missAppointment(String name, Date date, int time) {
+		PatientProfile patient = getPatient(name);
+		if(patient == null){
+			return "No patient profile found";
+		}
+		
+		Appointment missApp = patient.getAppointment(date, time);
+		if(missApp == null){
+			return "Appointment not found";
+		} 
+		
+		patient.miss(missApp);
+		
+		return null;
+		
+	}
+
+	public String payFee(String name, Date date, int time) {
+		PatientProfile patient = getPatient(name);
+		if(patient == null){
+			return "No patient profile found";
+		}
+		
+		if(patient.getMissedAppointments() == 0){
+			return "No outstanding fees for patient";
+		}
+		
+		Appointment missApp = patient.getAppointment(date, time);
+		if(missApp == null){
+			return "Appointment not found";
+		} 
+		
+		patient.payFee(missApp);
+		
+		return null;
+		
 	}
 
 

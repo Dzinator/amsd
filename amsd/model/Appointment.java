@@ -4,7 +4,7 @@
 package amsd.model;
 import java.sql.Date;
 
-// line 77 "../../model.ump"
+// line 113 "../../model.ump"
 public class Appointment
 {
 
@@ -92,7 +92,7 @@ public class Appointment
     return sm;
   }
 
-  public boolean cancel(Date today)
+  public boolean cancel(long today)
   {
     boolean wasEventProcessed = false;
     
@@ -100,7 +100,7 @@ public class Appointment
     switch (aSm)
     {
       case Booked:
-        if (getDate().getTime()-today.getTime()>=twoDaysInMillis)
+        if (getDate().getTime()-today>=twoDaysInMillis)
         {
           setSm(Sm.Canceled);
           wasEventProcessed = true;
@@ -171,6 +171,16 @@ public class Appointment
   private void setSm(Sm aSm)
   {
     sm = aSm;
+
+    // entry actions and do activities
+    switch(sm)
+    {
+      case Canceled:
+        // line 131 "../../model.ump"
+        this.getAvailability().cancel();
+      		this.delete();
+        break;
+    }
   }
 
   public PatientProfile getPatientProfile()
@@ -286,7 +296,7 @@ public class Appointment
   // DEVELOPER CODE - PROVIDED AS-IS
   //------------------------
   
-  // line 80 ../../model.ump
+  // line 116 ../../model.ump
   final long twoDaysInMillis = 1000*60*60*24*2 ;
 
   

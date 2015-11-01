@@ -5,7 +5,7 @@ package amsd.model;
 import java.util.*;
 import java.sql.Date;
 
-// line 37 "../../model.ump"
+// line 64 "../../model.ump"
 public class EmployeeProfile
 {
 
@@ -298,13 +298,23 @@ public class EmployeeProfile
     }
   }
 
-  // line 45 "../../model.ump"
+  // line 72 "../../model.ump"
    public Availability getAvailability(Date date, int time){
     for(Availability avail : getAvailabilities()){
 		  if(avail.getDate().equals(date) && avail.getTime() == time){
 			  return avail;
 		  }
-	  }
+		}
+	  return null;
+  }
+
+  // line 81 "../../model.ump"
+   public Appointment getAppointment(Date date, int time){
+    for(Appointment app : getAppointments()){
+		  if(app.getDate().equals(date) && app.getTime() == time){
+			  return app;
+		  }
+		}
 	  return null;
   }
 

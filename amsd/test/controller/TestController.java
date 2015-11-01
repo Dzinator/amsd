@@ -180,20 +180,144 @@ public class TestController {
 		
 		controller.setAvailable("Oscar", date, true);
 		
-		controller.makeDentistReservation("Dave", date, 8);
+		controller.makeDentistAppointment("Dave", date, 8);
+		error = 
+				controller.makeDentistAppointment("Dave", date, 8);
+		assertNotNull(error);
 		
 		//No availability at that time
-		error = controller.makeDentistReservation("Dave", new Date(2015,4,5), 12);
+		error = controller.makeDentistAppointment("Dave", new Date(2015,4,5), 12);
 		assertNotNull(error);
 		
 		//Dentist can't make a reservation
-		error = controller.makeDentistReservation("Oscar", date, 12);
+		error = controller.makeDentistAppointment("Oscar", date, 12);
 		assertNotNull(error);
 		
+		//make sure availability is booked at right time.
+		
+		assertEquals(8,ams.getPatientProfile(0).getAppointment(0).getTime());
+		assertEquals(5,ams.getPatientProfile(0).getAppointment(0).getDate().getMonth());
 		 
+		assertEquals(1,ams.getAppointments().size());
+		
+		//Make sure the state of the availability is booked
+		assertTrue(ams.getDentistProfile(0).getAvailability(date, 8)
+				.getSmFullName().equals("Booked"));
+		assertTrue(ams.getDentistProfile(0).getAvailability(date, 8).hasAppointment());
 		
 	}
 	
+	@Test
+	public void testCancelAppointment(){
+		AppointmentManagementSystem ams = AppointmentManagementSystem.getInstance();
+		String name = "Oscar";
+		int number = 1234567;
+		
+		Controller controller = new Controller();
+		controller.addDentist(name, number);
+		
+		name = "Dave";
+		number = 12345609;
+		
+		controller.addPatient(name, number);
+		
+		Date date = new Date(2016, 5, 3);
+		
+		controller.setAvailable("Oscar", date, true);
+		
+		controller.makeDentistAppointment("Dave", date, 8);
+		
+		
+		controller.cancelAppointment("Dave", date, 8);
+		
+		assertEquals(1,ams.getAppointments().size());
+		//Make sure the state of the availability is booked
+		assertTrue(ams.getDentistProfile(0).getAvailability(date, 8)
+				.getSmFullName().equals("Available"));
+		assertFalse(ams.getDentistProfile(0).getAvailability(date, 8).hasAppointment());
+		
+		//Can't cancel appointment twice
+		String error = controller.cancelAppointment("Dave", date, 8);
+		assertNotNull(error);
+	}
+	
+	
+	@Test
+	public void testMissAppointment(){
+		AppointmentManagementSystem ams = AppointmentManagementSystem.getInstance();
+		String name = "Oscar";
+		int number = 1234567;
+		
+		Controller controller = new Controller();
+		controller.addDentist(name, number);
+		
+		name = "Dave";
+		number = 12345609;
+		
+		controller.addPatient(name, number);
+		
+		Date date = new Date(2016, 5, 3);
+		
+		controller.setAvailable("Oscar", date, true);
+		
+		controller.makeDentistAppointment("Dave", date, 8);
+		controller.makeDentistAppointment("Dave", date, 9);
+		controller.makeDentistAppointment("Dave", date, 10);
+		
+		assertEquals(3,ams.getAppointments().size());
+		
+		controller.missAppointment("Dave", date, 8);
+		
+		assertEquals(1,ams.getPatientProfile(0).getMissedAppointments());
+		assertTrue(ams.getPatientProfile(0).getSmFullName().equals("Allowed"));
+		
+		controller.missAppointment("Dave", date, 8);
+		assertEquals(2,ams.getPatientProfile(0).getMissedAppointments());
+		assertTrue(ams.getPatientProfile(0).getSmFullName().equals("NotAllowed"));
+	
+		String error  = 
+				controller.makeDentistAppointment("Dave", date, 8);;
+		assertNotNull(error);
+		
+	}
+	
+	public void testPayFee(){
+		AppointmentManagementSystem ams = AppointmentManagementSystem.getInstance();
+		String name = "Oscar";
+		int number = 1234567;
+		
+		Controller controller = new Controller();
+		controller.addDentist(name, number);
+		
+		name = "Dave";
+		number = 12345609;
+		
+		controller.addPatient(name, number);
+		
+		Date date = new Date(2016, 5, 3);
+		
+		controller.setAvailable("Oscar", date, true);
+		
+		controller.makeDentistAppointment("Dave", date, 8);
+		controller.makeDentistAppointment("Dave", date, 9);
+		controller.makeDentistAppointment("Dave", date, 10);
+		
+		assertEquals(3,ams.getAppointments().size());
+			
+		controller.missAppointment("Dave", date, 8);
+		
+		assertEquals(1,ams.getPatientProfile(0).getMissedAppointments());
+		assertTrue(ams.getPatientProfile(0).getSmFullName().equals("Allowed"));
+		
+		controller.missAppointment("Dave", date, 8);
+		assertEquals(2,ams.getPatientProfile(0).getMissedAppointments());
+		assertTrue(ams.getPatientProfile(0).getSmFullName().equals("NotAllowed"));
+	
+		controller.payFee("Dave",date,8);
+		
+		assertEquals(1,ams.getPatientProfile(0).getMissedAppointments());
+		assertTrue(ams.getPatientProfile(0).getSmFullName().equals("Allowed"));
+	}
 	
 	
 	private void checkResutHygienist(String name, int number,

@@ -16,6 +16,10 @@ public class PatientProfile
   //PatientProfile Attributes
   private int missedAppointments;
 
+  //PatientProfile State Machines
+  enum Sm { Allowed, NotAllowed }
+  private Sm sm;
+
   //PatientProfile Associations
   private List<Appointment> appointments;
   private Person person;
@@ -33,6 +37,7 @@ public class PatientProfile
     {
       throw new RuntimeException("Unable to create patientProfile due to person");
     }
+    setSm(Sm.Allowed);
   }
 
   //------------------------
@@ -50,6 +55,72 @@ public class PatientProfile
   public int getMissedAppointments()
   {
     return missedAppointments;
+  }
+
+  public String getSmFullName()
+  {
+    String answer = sm.toString();
+    return answer;
+  }
+
+  public Sm getSm()
+  {
+    return sm;
+  }
+
+  public boolean miss(Appointment app)
+  {
+    // line 51 "../../model.ump"
+    missedAppointments++; 
+      			app.miss();
+    boolean wasEventProcessed = false;
+    
+    Sm aSm = sm;
+    switch (aSm)
+    {
+      case Allowed:
+        if (getMissedAppointments()>=2)
+        {
+          setSm(Sm.NotAllowed);
+          wasEventProcessed = true;
+          break;
+        }
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    return wasEventProcessed;
+  }
+
+  public boolean payFee(Appointment app)
+  {
+    // line 55 "../../model.ump"
+    missedAppointments--;
+      			app.payfee();
+    boolean wasEventProcessed = false;
+    
+    Sm aSm = sm;
+    switch (aSm)
+    {
+      case NotAllowed:
+        if (getMissedAppointments()<2)
+        {
+          setSm(Sm.Allowed);
+          wasEventProcessed = true;
+          break;
+        }
+        break;
+      default:
+        // Other states do respond to this event
+    }
+
+    return wasEventProcessed;
+  }
+
+  private void setSm(Sm aSm)
+  {
+    sm = aSm;
   }
 
   public Appointment getAppointment(int index)
@@ -200,6 +271,16 @@ public class PatientProfile
     {
       existingPerson.setPatientProfile(null);
     }
+  }
+
+  // line 34 "../../model.ump"
+   public Appointment getAppointment(Date date, int time){
+    for(Appointment app : getAppointments()){
+		  if(app.getDate().equals(date) && app.getTime() == time){
+			  return app;
+		  }
+		}
+	  return null;
   }
 
 
