@@ -58,7 +58,8 @@ public class BookingPage extends JFrame {
 	private Integer selectedTime = -1;
 	private Integer selectedPersonType = 0;
 	
-	
+
+	private String[] times = { "8", "9", "10", "11", "13", "14", "15", "16" };
 	private String[] employeeActions = { "available", "unavailable" };
 	private String[] patientActions = { "checkup", "cleanup"  };
 
@@ -99,7 +100,6 @@ public class BookingPage extends JFrame {
 		});
 		visitTypeLabel = new JLabel();
 
-		String[] times = { "8", "9", "10", "11", "13", "14", "15", "16" };
 		visitTimeList = new JComboBox<String>(times);
 		visitTimeList.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -395,7 +395,6 @@ public class BookingPage extends JFrame {
 			Controller c = new Controller();
 			java.sql.Date date = (java.sql.Date) datePicker.getModel()
 					.getValue();
-			int time = 9;
 			
 			String name = personList.getItemAt(selectedPatient);
 			
@@ -404,6 +403,7 @@ public class BookingPage extends JFrame {
 				if (selectedTime < 0)
 					error = error + "A time needs to be selected! ";
 				else {
+					int time = Integer.parseInt(times[selectedTime]);
 					if(actionType == CHECKUP_ACTION){
 						error = c.makeDentistAppointment(name, date, time);
 					} else {
