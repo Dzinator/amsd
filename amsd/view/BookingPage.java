@@ -42,19 +42,14 @@ public class BookingPage extends JFrame {
 	
 	private JDatePickerImpl datePicker;
 	private JLabel dateLabel;
-	/*
-	private JSpinner startTimeSpinner;
-	private JLabel startTimeLabel;
-	private JSpinner endTimeSpinner;
-	private JLabel endTimeLabel;
-	private JButton addEventButton;
-	*/
 	
 	// data elements
 	private String error = null;
 	private Integer selectedPatient = -1;
-	private HashMap<Integer, PatientProfile> patients;
+	private HashMap<Integer, Person> patients;
 	private Integer selectedType = -1;
+	private Integer selectedTime = -1;
+	private Integer selectedPersonType = -1;
 	//private HashMap<Integer, Event> events;
 	
 	/** Creates new form EventRegistrationPage */
@@ -92,7 +87,25 @@ public class BookingPage extends JFrame {
 		});
 		visitTypeLabel = new JLabel();
 		
-		//TODO other comboLists
+		String[] times = {"8","9","10","11","13","14","15","16"};
+		visitTimeList = new JComboBox<String>(times);
+		visitTimeList.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+		        JComboBox<String> cb = (JComboBox<String>) evt.getSource();
+		        selectedTime = cb.getSelectedIndex();
+			}
+		});
+		visitTimeLabel = new JLabel();
+		
+		String[] personTypes = {"Patient","Dentist","Hygienist"};
+		personTypeList = new JComboBox<String>(personTypes);
+		personTypeList.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+		        JComboBox<String> cb = (JComboBox<String>) evt.getSource();
+		        selectedPersonType = cb.getSelectedIndex();
+			}
+		});
+		personTypeLabel = new JLabel();
 		
 		
 		bookButton = new JButton();
@@ -114,17 +127,6 @@ public class BookingPage extends JFrame {
 		datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
 		
 		dateLabel = new JLabel();
-		/*
-		startTimeSpinner = new JSpinner( new SpinnerDateModel() );
-		JSpinner.DateEditor startTimeEditor = new JSpinner.DateEditor(startTimeSpinner, "HH:mm");
-		startTimeSpinner.setEditor(startTimeEditor); // will only show the current time
-		startTimeLabel = new JLabel();
-		endTimeSpinner = new JSpinner( new SpinnerDateModel() );
-		JSpinner.DateEditor endTimeEditor = new JSpinner.DateEditor(endTimeSpinner, "HH:mm");
-		endTimeSpinner.setEditor(endTimeEditor); // will only show the current time
-		endTimeLabel = new JLabel();
-		addEventButton = new JButton();
-		*/
 
 		// global settings and listeners
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -149,16 +151,9 @@ public class BookingPage extends JFrame {
 
 		personPhoneLabel.setText("Phone:");
 		dateLabel.setText("Date:");
-		/*
-		startTimeLabel.setText("Start Time:");
-		endTimeLabel.setText("End time:");
-		addEventButton.setText("Add Event");
-		addEventButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				addEventButtonActionPerformed(evt);
-			}
-		});
-		*/
+		visitTypeLabel.setText("Type:");
+		visitTimeLabel.setText("Time:");
+		personTypeLabel.setText("Person Type:");
 		
 		// layout
 		GroupLayout layout = new GroupLayout(getContentPane());
@@ -230,38 +225,31 @@ public class BookingPage extends JFrame {
 		errorMessage.setText(error);
 		if (error == null || error.length() == 0) {
 			// participant list
-			patients = new HashMap<Integer, PatientProfile>();
+			patients = new HashMap<Integer, Person>();
 			patientList.removeAllItems();
-			Iterator<Participant> pIt = amsd.getParticipants().iterator();
+			Iterator<Person> pIt = amsd.getPersons().iterator();
 			Integer index = 0;
 			while (pIt.hasNext()) {
-				Participant p = pIt.next();
+				Person p = pIt.next();
 				patients.put(index, p);
 				patientList.addItem(p.getName());
 				index++;
 			}
 			selectedPatient = -1;
 			patientList.setSelectedIndex(selectedPatient);
-			// event list
-			events = new HashMap<Integer, Event>();
-			visitTypeList.removeAllItems();
-			Iterator<Event> eIt = amsd.getEvents().iterator();
-			index = 0;
-			while (eIt.hasNext()) {
-				Event e = eIt.next();
-				events.put(index, e);
-				visitTypeList.addItem(e.getName());
-				index++;
-			}
-			selectedEvent = -1;
-			visitTypeList.setSelectedIndex(selectedEvent);
+			
+			selectedType = -1;
+			selectedTime = -1;
+			selectedPersonType = -1;
+			
+			visitTypeList.setSelectedIndex(selectedType);
+			visitTimeList.setSelectedIndex(selectedTime);
+			personTypeList.setSelectedIndex(selectedPersonType);
 			// participant
 			personNameTextField.setText("");
 			// event
 			personPhoneTextField.setText("");
 			datePicker.getModel().setValue(null);
-			startTimeSpinner.setValue(new Date()); 
-			endTimeSpinner.setValue(new Date());
 		}
 
 		// this is needed because the size of the window changes depending on whether an error message is shown or not
@@ -270,40 +258,94 @@ public class BookingPage extends JFrame {
 
 	private void addPersonButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		// call the controller
-		EventRegistrationController erc = new EventRegistrationController();
-		error = erc.createParticipant(personNameTextField.getText());
+		Controller c = new Controller();
+		
+		error = "";
+		if (personNameTextField.getText().length() == 0)
+			error = error + "A person name must be entered! ";
+		if (personPhoneTextField.getText().length() == 0)
+			error = error + "A phone number must be entered! ";
+		if (selectedPersonType < 0)
+			error = error + "A person type must be selected! ";
+		error = error.trim();
+		if (error.length() == 0) {
+			if(selectedType == 0) {
+				//add patient
+				try {
+					error = c.addPatient(personNameTextField.getText(), Integer.parseInt(personPhoneTextField.getText()));
+				} catch (NumberFormatException e) {
+					error = error + "Enter a valid phone number(no hyphens or parenthesis)!";
+				}
+			}
+			else if(selectedType == 1) {
+				//add dentist
+				try {
+					error = c.addDentist(personNameTextField.getText(), Integer.parseInt(personPhoneTextField.getText()));
+				} catch (NumberFormatException e) {
+					error = error + "Enter a valid phone number(no hyphens or parenthesis)!";
+				}
+			}
+			else {
+				//add hygienist
+				try {
+					error = c.addHygienist(personNameTextField.getText(), Integer.parseInt(personPhoneTextField.getText()));
+				} catch (NumberFormatException e) {
+					error = error + "Enter a valid phone number(no hyphens or parenthesis)!";
+				}
+			}
+		}
+		
 		// update visuals
 		refreshData();
 	}
-
-	private void addEventButtonActionPerformed(java.awt.event.ActionEvent evt) {
-		// call the controller
-		EventRegistrationController erc = new EventRegistrationController();
-		// JSpinner actually returns a date and time
-		// force the same date for start and end time to ensure that only the times differ
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime((Date) startTimeSpinner.getValue());
-		calendar.set(2000, 1, 1);
-		Time startTime = new Time(calendar.getTime().getTime());
-		calendar.setTime((Date) endTimeSpinner.getValue());
-		calendar.set(2000, 1, 1);
-		Time endTime = new Time(calendar.getTime().getTime());
-		error = erc.createEvent(personPhoneTextField.getText(), (java.sql.Date) datePicker.getModel().getValue(), startTime, endTime);
-		// update visuals
-		refreshData();
-	}
-
+	
 	private void bookButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		error = "";
 		if (selectedPatient < 0)
-			error = error + "Participant needs to be selected for registration! ";
-		if (selectedEvent < 0)
-			error = error + "Event needs to be selected for registration!";
+			error = error + "A person needs to be selected! ";
+		if (selectedType < 0)
+			error = error + "A type needs to be selected! ";
+		if (datePicker.getModel().getValue() == null)
+			error = error + "A date needs to be selected! ";
 		error = error.trim();
 		if (error.length() == 0) {
 			// call the controller
-			EventRegistrationController erc = new EventRegistrationController();
-			error = erc.register(patients.get(selectedPatient), events.get(selectedEvent));
+			Controller c = new Controller();
+			//TODO handle different requests
+			Person p = patients.get(selectedPatient);
+			java.sql.Date date = (java.sql.Date) datePicker.getModel().getValue();
+			int time = 9;
+			if(selectedType < 2) {
+				//employee scheduling availabilities
+				if(!p.hasEmployeeProfile())
+					error = error + "A valid employee needs to be selected! ";
+				else if(selectedType == 0) {
+					//set day available --> DON'T CARE ABOUT TIME
+					error = c.setAvailable(p.getName(), date, true);
+				}
+				else {
+					//set day unavailable --> DON'T CARE ABOUT TIME
+					error = c.setAvailable(p.getName(), date, false);
+				}
+			}
+			else {
+				//patient appointment
+				if (selectedTime < 0)
+					error = error + "A time needs to be selected! ";
+				/*TODO fix hasPatientProfile and uncomment this
+				else if(!p.hasPatientProfile())
+					error = error + "A valid patient needs to be selected! ";
+				*/
+				else if(selectedType == 2){
+					//check-up
+					error = c.makeDentistAppointment(p.getName(), date, time);
+				}
+				else {
+					//clean-up
+					error = c.makeHygienistAppointment(p.getName(), date, time);
+				}
+			}
+			
 		}
 		// update visuals
 		refreshData();			
