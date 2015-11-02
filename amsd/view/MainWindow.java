@@ -53,7 +53,7 @@ public class MainWindow extends JFrame{
 				continue;
 			}
 			rows[i][0] = entry;
-			rows[i][1] = a.getSmFullName() == "Canceled";
+			rows[i][1] = a.getSmFullName() == "Missed";
 			rows[i][2] = a.getSmFullName() == "FeePaid";
 			
 			i++;
