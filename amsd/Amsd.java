@@ -10,13 +10,12 @@ public class Amsd {
 
 	public static void main(String[] args) {
 		// load model
-		PersistenceAMSD.loadEventRegistrationModel();
+		PersistenceAMSD.loadEventRegistrationModel("amsd.xml");
         Runtime.getRuntime().addShutdownHook(new Thread(){
         	
         	public void run(){
         		AppointmentManagementSystem ams = AppointmentManagementSystem.getInstance();
-//        		PersistenceAMSD pers = new PersistenceAMSD();
-        		PersistenceAMSD.initializeXStream();
+        		PersistenceAMSD.initializeXStream("amsd.xml");
 
         		if (!PersistenceXStream.saveToXMLwithXStream(ams))
         			fail("Could not save file.");

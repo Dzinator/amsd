@@ -3,13 +3,15 @@ package amsd.test.controller;
 import static org.junit.Assert.*;
 
 import java.sql.Date;
+import java.util.Calendar;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import amsd.controller.Controller;
+import amsd.model.Appointment;
 import amsd.model.AppointmentManagementSystem;
-import amsd.model.DentistProfile;
+import amsd.persistence.PersistenceAMSD;
 
 public class TestController {
 
@@ -319,6 +321,42 @@ public class TestController {
 		assertTrue(ams.getPatientProfile(0).getSmFullName().equals("Allowed"));
 	}
 	
+	@Test
+	public void testRebookingCancelledAppointment(){
+		PersistenceAMSD.loadEventRegistrationModel("amsd.xml");
+		AppointmentManagementSystem ams = AppointmentManagementSystem.getInstance();
+		
+		Controller c = new Controller();
+		
+		Calendar cal = Calendar.getInstance();
+		cal.set(2015,Calendar.NOVEMBER,11,0,0,0);
+		Date date = new Date(cal.getTime().getTime());
+		
+		
+		c.makeDentistAppointment("mona",date, 8);
+		assertEquals(1,ams.getPatientProfile(0).getAppointments().size());
+		c.cancelAppointment("mona", date, 8);
+		
+		assertEquals(0,ams.getPatientProfile(0).getAppointments().size());
+		assertEquals(1,ams.getAppointments().size());
+		
+		PersistenceAMSD.saveEventRegistrationModel("amsd1.xml");
+		
+		ams.delete();
+		PersistenceAMSD.loadEventRegistrationModel("amsd1.xml");
+
+		assertEquals(0,ams.getPatientProfile(0).getAppointments().size());
+		assertEquals(1,ams.getAppointments().size());
+		Appointment app = ams.getAppointment(0);
+		assertTrue(app.getSmFullName().equals("Canceled"));
+
+
+		c.makeDentistAppointment("mona",date, 8);
+		assertEquals(1,ams.getPatientProfile(0).getAppointments().size());
+		
+		String error = c.cancelAppointment("mona", date, 8);
+		assertNull(error);
+	}
 	
 	private void checkResutHygienist(String name, int number,
 			AppointmentManagementSystem ams) {

@@ -1,13 +1,23 @@
 package amsd.persistence;
 
+import static org.junit.Assert.fail;
+
 import java.util.Iterator;
 
 import amsd.model.*;
 
 public class PersistenceAMSD {
 
-	public static void initializeXStream() {
-		PersistenceXStream.setFilename("amsd.xml");
+	
+	public static void saveEventRegistrationModel(String filename){
+		PersistenceAMSD.initializeXStream(filename);
+		AppointmentManagementSystem ams = AppointmentManagementSystem.getInstance();
+		if (!PersistenceXStream.saveToXMLwithXStream(ams))
+			fail("Could not save file.");
+	}
+	
+	public static void initializeXStream(String filename) {
+		PersistenceXStream.setFilename(filename);
 		
 		PersistenceXStream.setAlias("appointment", Appointment.class);
 		//PersistenceXStream.setAlias("availability", Availability.class);
@@ -19,9 +29,9 @@ public class PersistenceAMSD {
 		PersistenceXStream.setAlias("amsd", AppointmentManagementSystem.class);
 	}
 
-	public static void loadEventRegistrationModel() {
+	public static void loadEventRegistrationModel(String filename) {
 		AppointmentManagementSystem apms = AppointmentManagementSystem.getInstance();
-		PersistenceAMSD.initializeXStream();
+		PersistenceAMSD.initializeXStream(filename);
 		AppointmentManagementSystem apms2 = (AppointmentManagementSystem) PersistenceXStream.loadFromXMLwithXStream();
 		if (apms2 != null) {
 			//TODO might need to add support for availabilities

@@ -49,7 +49,7 @@ public class TestPersistence {
 		// save model
 		AppointmentManagementSystem ams = AppointmentManagementSystem.getInstance();
 //		PersistenceAMSD pers = new PersistenceAMSD();
-		PersistenceAMSD.initializeXStream();
+		PersistenceAMSD.initializeXStream("amsd.xml");
 
 		if (!PersistenceXStream.saveToXMLwithXStream(ams))
 			fail("Could not save file.");

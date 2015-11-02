@@ -98,7 +98,7 @@ public class Controller {
 		List<Availability> availOnDay = new ArrayList<>();
 		
 		for(Availability avail : profile.getAvailabilities()){
-			if(date.equals(avail.getDate())){
+			if(datesEqual(date,avail.getDate())){
 				foundAvailability = true;
 				availOnDay.add(avail);
 				if(avail.hasAppointment()){
@@ -280,5 +280,12 @@ public class Controller {
 		
 		return null;
 	}
+	
+	public static boolean datesEqual(Date date1, Date date2) {
+		  return date1.getDate() == date2.getDate() &&
+				  date1.getMonth() == date2.getMonth() &&
+				  date1.getYear() == date2.getYear();
+	}
+
 
 }

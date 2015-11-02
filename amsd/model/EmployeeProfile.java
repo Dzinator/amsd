@@ -2,8 +2,12 @@
 /*This code was generated using the UMPLE 1.22.0.5146 modeling language!*/
 
 package amsd.model;
-import java.util.*;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import amsd.controller.Controller;
 
 // line 64 "../../model.ump"
 public class EmployeeProfile
@@ -301,14 +305,15 @@ public class EmployeeProfile
   // line 72 "../../model.ump"
    public Availability getAvailability(Date date, int time){
     for(Availability avail : getAvailabilities()){
-		  if(avail.getDate().equals(date) && avail.getTime() == time){
+		  if(Controller.datesEqual(date,avail.getDate()) && avail.getTime() == time){
 			  return avail;
 		  }
 		}
 	  return null;
   }
 
-  // line 81 "../../model.ump"
+
+// line 81 "../../model.ump"
    public Appointment getAppointment(Date date, int time){
     for(Appointment app : getAppointments()){
 		  if(app.getDate().equals(date) && app.getTime() == time){

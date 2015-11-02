@@ -395,6 +395,7 @@ public class BookingPage extends JFrame {
 			Controller c = new Controller();
 			java.sql.Date date = (java.sql.Date) datePicker.getModel()
 					.getValue();
+		
 			
 			String name = personList.getItemAt(selectedPatient);
 			
