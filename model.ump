@@ -27,12 +27,13 @@ class Person {
 class PatientProfile
 
 {
+	depend amsd.controller.*;
      Integer missedAppointments;
      1 -- * Appointment;
 
 	public Appointment getAppointment(Date date, int time){
 	    for(Appointment app : getAppointments()){
-		  if(app.getDate().equals(date) && app.getTime() == time){
+		  if(Controller.datesEqual(app.getDate(),date) && app.getTime() == time){
 			  return app;
 		  }
 		}
@@ -64,22 +65,22 @@ class PatientProfile
 class EmployeeProfile
 
 {
-
+	depend amsd.controller.*;
      1 -- * Appointment;
      1 -- * Availability;
      
-    public Availability getAvailability(Date date, int time){
-	    for(Availability avail : getAvailabilities()){
-		  if(avail.getDate().equals(date) && avail.getTime() == time){
+       public Availability getAvailability(Date date, int time){
+    for(Availability avail : getAvailabilities()){
+		  if(Controller.datesEqual(date,avail.getDate()) && avail.getTime() == time){
 			  return avail;
 		  }
 		}
 	  return null;
-  	}
+  }
   	
   	public Appointment getAppointment(Date date, int time){
 	    for(Appointment app : getAppointments()){
-		  if(app.getDate().equals(date) && app.getTime() == time){
+		  if(Controller.datesEqual(app.getDate(),date) && app.getTime() == time){
 			  return app;
 		  }
 		}
@@ -130,7 +131,7 @@ class Appointment
       Canceled {
       	entry / {
 	  		this.getAvailability().cancel();
-      		this.delete();
+      		//this.delete();
       	}
       }
 

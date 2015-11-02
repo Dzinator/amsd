@@ -232,7 +232,7 @@ public class TestController {
 		
 		controller.cancelAppointment("Dave", date, 8);
 		
-		assertEquals(1,ams.getAppointments().size());
+		assertEquals(0,ams.getAppointments().size());
 		//Make sure the state of the availability is booked
 		assertTrue(ams.getDentistProfile(0).getAvailability(date, 8)
 				.getSmFullName().equals("Available"));
@@ -338,7 +338,7 @@ public class TestController {
 		c.cancelAppointment("mona", date, 8);
 		
 		assertEquals(0,ams.getPatientProfile(0).getAppointments().size());
-		assertEquals(1,ams.getAppointments().size());
+		assertEquals(0,ams.getAppointments().size());
 		
 		PersistenceAMSD.saveEventRegistrationModel("amsd1.xml");
 		
@@ -346,16 +346,16 @@ public class TestController {
 		PersistenceAMSD.loadEventRegistrationModel("amsd1.xml");
 
 		assertEquals(0,ams.getPatientProfile(0).getAppointments().size());
-		assertEquals(1,ams.getAppointments().size());
-		Appointment app = ams.getAppointment(0);
-		assertTrue(app.getSmFullName().equals("Canceled"));
+		assertEquals(0,ams.getAppointments().size());
 
 
 		c.makeDentistAppointment("mona",date, 8);
 		assertEquals(1,ams.getPatientProfile(0).getAppointments().size());
+		assertEquals(1,ams.getAppointments().size());
 		
 		String error = c.cancelAppointment("mona", date, 8);
 		assertNull(error);
+		PersistenceAMSD.saveEventRegistrationModel("amsd1.xml");
 	}
 	
 	private void checkResutHygienist(String name, int number,

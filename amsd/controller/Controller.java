@@ -157,6 +157,7 @@ public class Controller {
 		for(DentistProfile dentist : ams.getDentistProfiles()){
 			Availability avail = dentist.getAvailability(date, time);
 			if(avail != null && avail.getSmFullName().equals("Available")){
+				
 				//make appointment
 				Appointment app = new Appointment(date, time, patient, dentist, avail);
 				ams.addAppointment(app);
@@ -221,7 +222,11 @@ public class Controller {
 		
 		Appointment cancelApp = patient.getAppointment(date, time);
 		if(cancelApp != null){
-			cancelApp.cancel(System.currentTimeMillis());
+			if(cancelApp.cancel(System.currentTimeMillis())){
+				cancelApp.delete();
+				ams.removeAppointment(cancelApp);
+			}
+			
 		} else {
 			return "Appointment not found";
 		}

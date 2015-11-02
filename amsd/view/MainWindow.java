@@ -33,6 +33,15 @@ public class MainWindow extends JFrame{
 	private void refresh() {
 		List<Appointment> appointments = ams.getAppointments();
 		int i = 0;
+		
+		if(appointments.size() == 0){
+			for(int j = 0; j < 50; j++){
+				rows[j][0] = "";
+				rows[j][1] = "";
+				rows[j][2] = "";
+			}
+		}
+		
 		for(Appointment a : appointments){
 			if(a == null) continue;
 			String entry;
@@ -47,10 +56,10 @@ public class MainWindow extends JFrame{
 			rows[i][1] = a.getSmFullName() == "Canceled";
 			rows[i][2] = a.getSmFullName() == "FeePaid";
 			
-			table.repaint();
 			i++;
 		}
-		
+
+		table.repaint();
 		pack();
 		repaint();
 		

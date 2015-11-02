@@ -2,6 +2,7 @@
 /*This code was generated using the UMPLE 1.22.0.5146 modeling language!*/
 
 package amsd.model;
+import amsd.controller.*;
 import java.util.*;
 import java.sql.Date;
 
@@ -70,7 +71,7 @@ public class PatientProfile
 
   public boolean miss(Appointment app)
   {
-    // line 51 "../../model.ump"
+    // line 52 "../../model.ump"
     missedAppointments++; 
       			app.miss();
     boolean wasEventProcessed = false;
@@ -95,7 +96,7 @@ public class PatientProfile
 
   public boolean payFee(Appointment app)
   {
-    // line 55 "../../model.ump"
+    // line 56 "../../model.ump"
     missedAppointments--;
       			app.payfee();
     boolean wasEventProcessed = false;
@@ -273,10 +274,10 @@ public class PatientProfile
     }
   }
 
-  // line 34 "../../model.ump"
+  // line 35 "../../model.ump"
    public Appointment getAppointment(Date date, int time){
     for(Appointment app : getAppointments()){
-		  if(app.getDate().equals(date) && app.getTime() == time){
+		  if(Controller.datesEqual(app.getDate(),date) && app.getTime() == time){
 			  return app;
 		  }
 		}
