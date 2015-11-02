@@ -225,6 +225,8 @@ public class Controller {
 			if(cancelApp.cancel(System.currentTimeMillis())){
 				cancelApp.delete();
 				ams.removeAppointment(cancelApp);
+			} else {
+				return "Could not cancel appointment";
 			}
 			
 		} else {
