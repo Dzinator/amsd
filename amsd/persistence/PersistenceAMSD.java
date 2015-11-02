@@ -20,7 +20,6 @@ public class PersistenceAMSD {
 		PersistenceXStream.setFilename(filename);
 		
 		PersistenceXStream.setAlias("appointment", Appointment.class);
-		//PersistenceXStream.setAlias("availability", Availability.class);
 		PersistenceXStream.setAlias("person", Person.class);
 		PersistenceXStream.setAlias("patient", PatientProfile.class);
 		PersistenceXStream.setAlias("employee", EmployeeProfile.class);
@@ -34,18 +33,12 @@ public class PersistenceAMSD {
 		PersistenceAMSD.initializeXStream(filename);
 		AppointmentManagementSystem apms2 = (AppointmentManagementSystem) PersistenceXStream.loadFromXMLwithXStream();
 		if (apms2 != null) {
-			//TODO might need to add support for availabilities
 			Iterator<Person> pIt = apms2.getPersons().iterator();
 			while (pIt.hasNext())
 				apms.addPerson(pIt.next());
 			Iterator<PatientProfile> ppIt = apms2.getPatientProfiles().iterator();
 			while (ppIt.hasNext())
 				apms.addPatientProfile(ppIt.next());
-			/*
-			Iterator<EmployeeProfile> epIt = apms2.get.iterator();
-			while (epIt.hasNext())
-				apms.addEmployeeProfile(epIt.next());
-			*/
 			Iterator<DentistProfile> dpIt = apms2.getDentistProfiles().iterator();
 			while (dpIt.hasNext())
 				apms.addDentistProfile(dpIt.next());

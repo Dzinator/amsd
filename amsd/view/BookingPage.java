@@ -1,11 +1,7 @@
 package amsd.view;
 
 import java.awt.Color;
-import java.sql.Time;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Properties;
 
 import javax.swing.*;
@@ -308,7 +304,6 @@ public class BookingPage extends JFrame {
 	private void refreshData() {
 		AppointmentManagementSystem amsd = AppointmentManagementSystem
 				.getInstance();
-		// error
 		errorMessage.setText(error);
 		refreshPersonList();
 
@@ -422,8 +417,6 @@ public class BookingPage extends JFrame {
 					error = c.setAvailable(name, date, false);
 				break;
 			}	
-			
-//
 		}
 		// update visuals
 		refreshData();
