@@ -34,13 +34,13 @@ public class MainWindow extends JFrame{
 		List<Appointment> appointments = ams.getAppointments();
 		int i = 0;
 		
-		if(appointments.size() == 0){
-			for(int j = 0; j < 50; j++){
-				rows[j][0] = "";
-				rows[j][1] = "";
-				rows[j][2] = "";
-			}
+		
+		for(int j = 0; j < 50; j++){
+			rows[j][0] = "";
+			rows[j][1] = "";
+			rows[j][2] = "";
 		}
+		
 		
 		for(Appointment a : appointments){
 			if(a == null) continue;
