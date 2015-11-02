@@ -6,7 +6,7 @@ import amsd.controller.*;
 import java.util.*;
 import java.sql.Date;
 
-// line 34 "../../model.ump"
+// line 57 "../../model.ump"
 public class PatientProfile
 {
 
@@ -31,6 +31,10 @@ public class PatientProfile
 
   public PatientProfile(int aMissedAppointments, Person aPerson)
   {
+    // line 61 "../../model.ump"
+    if(aPerson.hasPatientProfile()){
+    			throw new IllegalArgumentException("Person already has patient profile");
+    		}
     missedAppointments = aMissedAppointments;
     appointments = new ArrayList<Appointment>();
     boolean didAddPerson = setPerson(aPerson);
@@ -48,7 +52,7 @@ public class PatientProfile
   public boolean setMissedAppointments(int aMissedAppointments)
   {
     boolean wasSet = false;
-    // line 39 "../../model.ump"
+    // line 70 "../../model.ump"
     if( aMissedAppointments < 0){
          		return false;
          	}
@@ -75,8 +79,8 @@ public class PatientProfile
 
   public boolean miss(Appointment app)
   {
-    // line 64 "../../model.ump"
-    missedAppointments++; 
+    // line 95 "../../model.ump"
+    setMissedAppointments(getMissedAppointments() + 1); 
       			app.miss();
     boolean wasEventProcessed = false;
     
@@ -100,8 +104,8 @@ public class PatientProfile
 
   public boolean payFee(Appointment app)
   {
-    // line 68 "../../model.ump"
-    missedAppointments--;
+    // line 99 "../../model.ump"
+    setMissedAppointments(getMissedAppointments() - 1);
       			app.payfee();
     boolean wasEventProcessed = false;
     
@@ -278,7 +282,7 @@ public class PatientProfile
     }
   }
 
-  // line 47 "../../model.ump"
+  // line 78 "../../model.ump"
    public Appointment getAppointment(Date date, int time){
     for(Appointment app : getAppointments()){
 		  if(Controller.datesEqual(app.getDate(),date) && app.getTime() == time){

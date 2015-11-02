@@ -6,7 +6,7 @@ import amsd.controller.*;
 import java.util.*;
 import java.sql.Date;
 
-// line 77 "../../model.ump"
+// line 108 "../../model.ump"
 public class EmployeeProfile
 {
 
@@ -25,6 +25,10 @@ public class EmployeeProfile
 
   public EmployeeProfile(Person aPerson)
   {
+    // line 112 "../../model.ump"
+    if(aPerson.hasEmployeeProfile()){
+    			throw new IllegalArgumentException("Person already has employee profile");
+    		}
     appointments = new ArrayList<Appointment>();
     availabilities = new ArrayList<Availability>();
     boolean didAddPerson = setPerson(aPerson);
@@ -299,7 +303,7 @@ public class EmployeeProfile
     }
   }
 
-  // line 85 "../../model.ump"
+  // line 124 "../../model.ump"
    public Availability getAvailability(Date date, int time){
     for(Availability avail : getAvailabilities()){
 		  if(Controller.datesEqual(date,avail.getDate()) && avail.getTime() == time){
@@ -309,7 +313,7 @@ public class EmployeeProfile
 	  return null;
   }
 
-  // line 94 "../../model.ump"
+  // line 133 "../../model.ump"
    public Appointment getAppointment(Date date, int time){
     for(Appointment app : getAppointments()){
 		  if(Controller.datesEqual(app.getDate(),date) && app.getTime() == time){

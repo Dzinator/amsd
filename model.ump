@@ -19,14 +19,37 @@ class Person {
      name;
      
      before setName {
-     if (aName == null) {
+     if (aName == null || aName.trim().length() == 0) {
 			return false; }
      }
      
+     before constructor {
+     	if(aName == null){
+     		throw new IllegalArgumentException("Name cannot be null");
+     	} else if (aName.trim().length() == 0) {
+     		throw new IllegalArgumentException("Name cannot be empty");
+     	}
+     	if(!checkPhoneNumber(aPhoneNumber)){
+     		throw new IllegalArgumentException("Phone number not vaild format");
+     	}
+     }
      
   	 phoneNumber;
+  	 before setPhoneNumber {
+  	 	checkPhoneNumber(aPhoneNumber);
+  	 }
      1 -- 0..1 PatientProfile;
      1 -- 0..1 EmployeeProfile;
+     
+     
+     public boolean checkPhoneNumber(String aPhoneNumber) {
+     if (aPhoneNumber == null){
+  	 		return false;
+  	 	} else if (!(aPhoneNumber.matches("[0-9]+") && aPhoneNumber.length() >= 7)){
+  	 		return false;
+  	 	}
+  	 return true;
+  	 }
 }
 
  
@@ -34,6 +57,14 @@ class Person {
 class PatientProfile
 
 {
+
+	before constructor {
+		if(aPerson.hasPatientProfile()){
+			throw new IllegalArgumentException("Person already has patient profile");
+		}
+	}
+
+
 	depend amsd.controller.*;
      Integer missedAppointments;
      before setMissedAppointments {
@@ -62,11 +93,11 @@ class PatientProfile
   	}
   	
   		before miss {
-  			missedAppointments++; 
+  			setMissedAppointments(getMissedAppointments() + 1); 
   			app.miss();
   		};
   		before payFee {
-  			missedAppointments--;
+  			setMissedAppointments(getMissedAppointments() - 1);
   			app.payfee();
   		};
 
@@ -77,6 +108,14 @@ class PatientProfile
 class EmployeeProfile
 
 {
+
+	before constructor {
+		if(aPerson.hasEmployeeProfile()){
+			throw new IllegalArgumentException("Person already has employee profile");
+		}
+	}
+	
+	
 	depend amsd.controller.*;
      1 -- * Appointment;
      1 -- * Availability;

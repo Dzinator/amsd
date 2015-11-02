@@ -4,7 +4,7 @@
 package amsd.model;
 import java.util.*;
 
-// line 106 "../../model.ump"
+// line 145 "../../model.ump"
 public class DentistProfile extends EmployeeProfile
 {
 

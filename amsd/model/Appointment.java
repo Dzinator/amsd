@@ -4,7 +4,7 @@
 package amsd.model;
 import java.sql.Date;
 
-// line 126 "../../model.ump"
+// line 165 "../../model.ump"
 public class Appointment
 {
 
@@ -176,7 +176,7 @@ public class Appointment
     switch(sm)
     {
       case Canceled:
-        // line 144 "../../model.ump"
+        // line 183 "../../model.ump"
         this.getAvailability().cancel();
       		//this.delete();
         break;
@@ -296,7 +296,7 @@ public class Appointment
   // DEVELOPER CODE - PROVIDED AS-IS
   //------------------------
   
-  // line 129 ../../model.ump
+  // line 168 ../../model.ump
   final long twoDaysInMillis = 1000*60*60*24*2 ;
 
   

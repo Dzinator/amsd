@@ -334,10 +334,6 @@ public class BookingPage extends JFrame {
 		Controller c = new Controller();
 
 		error = "";
-		if (personNameTextField.getText().length() == 0)
-			error = error + "A person name must be entered! ";
-		if (personPhoneTextField.getText().length() == 0)
-			error = error + "A phone number must be entered! ";
 		if (selectedPersonType < 0)
 			error = error + "A person type must be selected! ";
 		error = error.trim();
@@ -345,32 +341,22 @@ public class BookingPage extends JFrame {
 
 			switch (selectedPersonType) {
 			case PATIENT_TYPE:
-				try {
 					error = c.addPatient(personNameTextField.getText(),
 							personPhoneTextField.getText());
-				} catch (NumberFormatException e) {
-					error = error
-							+ "Enter a valid phone number(no hyphens or parenthesis)!";
-				}
+				
 				break;
 
 			case DENTIST_TYPE:
-				try {
+				
 					error = c.addDentist(personNameTextField.getText(),
 							personPhoneTextField.getText());
-				} catch (NumberFormatException e) {
-					error = error
-							+ "Enter a valid phone number(no hyphens or parenthesis)!";
-				}
+								
 				break;
 			case HYGIENIST_TYPE:
-				try {
+			
 					error = c.addHygienist(personNameTextField.getText(),
 							personPhoneTextField.getText());
-				} catch (NumberFormatException e) {
-					error = error
-							+ "Enter a valid phone number(no hyphens or parenthesis)!";
-				} 
+				
 				break;
 			}
 		}

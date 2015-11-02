@@ -25,6 +25,15 @@ public class Person
 
   public Person(String aName, String aPhoneNumber)
   {
+    // line 26 "../../model.ump"
+    if(aName == null){
+         		throw new IllegalArgumentException("Name cannot be null");
+         	} else if (aName.trim().length() == 0) {
+         		throw new IllegalArgumentException("Name cannot be empty");
+         	}
+         	if(!checkPhoneNumber(aPhoneNumber)){
+         		throw new IllegalArgumentException("Phone number not vaild format");
+         	}
     name = aName;
     phoneNumber = aPhoneNumber;
   }
@@ -37,7 +46,7 @@ public class Person
   {
     boolean wasSet = false;
     // line 21 "../../model.ump"
-    if (aName == null) {
+    if (aName == null || aName.trim().length() == 0) {
     			return false; }
     name = aName;
     wasSet = true;
@@ -47,6 +56,8 @@ public class Person
   public boolean setPhoneNumber(String aPhoneNumber)
   {
     boolean wasSet = false;
+    // line 38 "../../model.ump"
+    checkPhoneNumber(aPhoneNumber);
     phoneNumber = aPhoneNumber;
     wasSet = true;
     return wasSet;
@@ -152,6 +163,16 @@ public class Person
     {
       existingEmployeeProfile.delete();
     }
+  }
+
+  // line 46 "../../model.ump"
+   public boolean checkPhoneNumber(String aPhoneNumber){
+    if (aPhoneNumber == null){
+  	 		return false;
+  	 	} else if (!(aPhoneNumber.matches("[0-9]+") && aPhoneNumber.length() >= 7)){
+  	 		return false;
+  	 	}
+  	 return true;
   }
 
 

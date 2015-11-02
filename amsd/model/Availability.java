@@ -4,7 +4,7 @@
 package amsd.model;
 import java.sql.Date;
 
-// line 182 "../../model.ump"
+// line 221 "../../model.ump"
 public class Availability
 {
 
@@ -89,7 +89,7 @@ public class Availability
     switch (aSm)
     {
       case Available:
-        // line 188 "../../model.ump"
+        // line 227 "../../model.ump"
         setAppointment(a);
         setSm(Sm.Booked);
         wasEventProcessed = true;
