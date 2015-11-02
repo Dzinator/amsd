@@ -1,6 +1,7 @@
 package amsd.view;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -22,8 +24,10 @@ public class MainWindow extends JFrame{
 	private JTable table;
 	private AppointmentManagementSystem ams;
 	
-	Object[] columnNames = {"Appointments","Missed","Paid"};
+	Object[] columnNames = {"Appointments","Status","Paid"};
 	Object[][] rows = new Object[50][3];
+	
+	int nbRows = 0;
 	
 	public MainWindow() {
 		initialize();
@@ -32,18 +36,19 @@ public class MainWindow extends JFrame{
 
 	private void refresh() {
 		List<Appointment> appointments = ams.getAppointments();
-		int i = 0;
 		
 		
 		for(int j = 0; j < 50; j++){
+			//reset all rows 
 			rows[j][0] = "";
 			rows[j][1] = "";
 			rows[j][2] = "";
+			nbRows = 0;
 		}
 		
 		
 		for(Appointment a : appointments){
-			if(a == null) continue;
+			
 			String entry;
 			try {
 				entry = a.getPatientProfile().getPerson().getName() 
@@ -52,11 +57,11 @@ public class MainWindow extends JFrame{
 			} catch (NullPointerException e) {
 				continue;
 			}
-			rows[i][0] = entry;
-			rows[i][1] = a.getSmFullName() == "Missed";
-			rows[i][2] = a.getSmFullName() == "FeePaid";
+			rows[nbRows][0] = entry;
+			rows[nbRows][1] = a.getSmFullName();
+			rows[nbRows][2] = a.getSmFullName() == "FeePaid";
 			
-			i++;
+			nbRows++;
 		}
 
 		table.repaint();
@@ -78,8 +83,8 @@ public class MainWindow extends JFrame{
 		getContentPane().setLayout(new BorderLayout());
 		
 		table = new JTable(rows,columnNames);
-		table.getColumnModel().getColumn(0).setPreferredWidth(310);
-		table.getColumnModel().getColumn(1).setPreferredWidth(10);
+		table.getColumnModel().getColumn(0).setPreferredWidth(300);
+		table.getColumnModel().getColumn(1).setPreferredWidth(50);
 		table.getColumnModel().getColumn(2).setPreferredWidth(10);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
@@ -95,6 +100,7 @@ public class MainWindow extends JFrame{
 				refresh();
 			}
 		});
+		refreshButton.setSize(50, 20);
 		
 		JButton cancelButton = new JButton("Cancel");
 		cancelButton.addActionListener(new ActionListener() {
@@ -108,9 +114,23 @@ public class MainWindow extends JFrame{
 				pay();
 			}
 		});
-		getContentPane().add(refreshButton, BorderLayout.LINE_END);
-		getContentPane().add(cancelButton, BorderLayout.NORTH);
-		getContentPane().add(payButton, BorderLayout.SOUTH);
+		JButton missButton = new JButton("Miss");
+		missButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				miss();
+			}
+		});
+		getContentPane().add(refreshButton, BorderLayout.NORTH);
+		
+		JPanel buttons = new JPanel();
+		buttons.setLayout(new FlowLayout());
+		buttons.add(cancelButton);
+		buttons.add(missButton);
+		buttons.add(payButton);
+		
+		
+		getContentPane().add(buttons, BorderLayout.SOUTH);
+		
 		
 		refresh();
 	}
@@ -123,14 +143,14 @@ public class MainWindow extends JFrame{
 		Controller c = new Controller();
 		
 		int selectedAppointment = table.getSelectedRow();
-		if(selectedAppointment >= ams.getAppointments().size()) {
+		if(selectedAppointment < 0 || selectedAppointment >= nbRows) {
 			result = "Please select an appointment";
 			JOptionPane.showMessageDialog(this, result);
 			refresh();
 			return;
 		}
 		try {
-			Appointment a = ams.getAppointment(selectedAppointment);
+			Appointment a = ams.getAppointment(selectedAppointment  + (ams.getAppointments().size() - nbRows));
 			result = c.cancelAppointment(a.getPatientProfile().getPerson().getName(), 
 								a.getDate(), 
 								a.getTime());
@@ -162,14 +182,14 @@ public class MainWindow extends JFrame{
 		Controller c = new Controller();
 		
 		int selectedAppointment = table.getSelectedRow();
-		if(selectedAppointment >= ams.getAppointments().size()) {
+		if(selectedAppointment < 0 || selectedAppointment >= nbRows) {
 			result = "Please select an appointment";
 			JOptionPane.showMessageDialog(this, result);
 			refresh();
 			return;
 		}
 		try {
-			Appointment a = ams.getAppointment(selectedAppointment);
+			Appointment a = ams.getAppointment(selectedAppointment + (ams.getAppointments().size() - nbRows));
 			result = c.payFee(a.getPatientProfile().getPerson().getName(), 
 								a.getDate(), 
 								a.getTime());
@@ -191,6 +211,44 @@ public class MainWindow extends JFrame{
 		}
 		
 		refresh();
+	}
+	
+	private void miss() {
+		/*
+		 * Miss selected appointment
+		 */
+		String result = "";
+		Controller c = new Controller();
 		
+		int selectedAppointment = table.getSelectedRow();
+		if(selectedAppointment < 0 || selectedAppointment >= nbRows) {
+			result = "Please select an appointment";
+			JOptionPane.showMessageDialog(this, result);
+			refresh();
+			return;
+		}
+		try {
+			Appointment a = ams.getAppointment(selectedAppointment  + (ams.getAppointments().size() - nbRows));
+			result = c.missAppointment(a.getPatientProfile().getPerson().getName(), 
+								a.getDate(), 
+								a.getTime());
+		} catch (NullPointerException e) {
+			result = "Appointment couldn't be missed!";
+			JOptionPane.showMessageDialog(this, result);
+			refresh();
+			return;
+		}
+		if(result == null) {
+			result = "Appointment successfully missed!";
+			JOptionPane.showMessageDialog(this, result);
+			refresh();
+			return;
+		}
+		result.trim();
+		if(result.length() > 0) {
+			JOptionPane.showMessageDialog(this, result);
+		}
+		
+		refresh();
 	}
 }
