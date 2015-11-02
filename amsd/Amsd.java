@@ -27,7 +27,8 @@ public class Amsd {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new BookingPage().setVisible(true);
-                new MainWindow().setVisible(true);
+                MainWindow.getInstance().setVisible(true);
+                
             }
         });
 

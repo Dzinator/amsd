@@ -330,6 +330,8 @@ public class BookingPage extends JFrame {
 		// this is needed because the size of the window changes depending on
 		// whether an error message is shown or not
 		pack();
+		
+		MainWindow.getInstance().refresh();
 	}
 
 	private void addPersonButtonActionPerformed(java.awt.event.ActionEvent evt) {

@@ -20,7 +20,7 @@ import amsd.controller.*;
 public class MainWindow extends JFrame{
 
 	private static final long serialVersionUID = 5174491816909068789L;
-	
+	static MainWindow theInstance;
 	private JTable table;
 	private AppointmentManagementSystem ams;
 	
@@ -29,12 +29,21 @@ public class MainWindow extends JFrame{
 	
 	int nbRows = 0;
 	
-	public MainWindow() {
+	private MainWindow() {
 		initialize();
 		//refresh();
 	}
+	
+	public static MainWindow getInstance()
+	  {
+	    if(theInstance == null)
+	    {
+	      theInstance = new MainWindow();
+	    }
+	    return theInstance;
+	  }
 
-	private void refresh() {
+	public void refresh() {
 		List<Appointment> appointments = ams.getAppointments();
 		
 		
