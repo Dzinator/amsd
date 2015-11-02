@@ -347,7 +347,7 @@ public class BookingPage extends JFrame {
 			case PATIENT_TYPE:
 				try {
 					error = c.addPatient(personNameTextField.getText(),
-							Integer.parseInt(personPhoneTextField.getText()));
+							personPhoneTextField.getText());
 				} catch (NumberFormatException e) {
 					error = error
 							+ "Enter a valid phone number(no hyphens or parenthesis)!";
@@ -357,7 +357,7 @@ public class BookingPage extends JFrame {
 			case DENTIST_TYPE:
 				try {
 					error = c.addDentist(personNameTextField.getText(),
-							Integer.parseInt(personPhoneTextField.getText()));
+							personPhoneTextField.getText());
 				} catch (NumberFormatException e) {
 					error = error
 							+ "Enter a valid phone number(no hyphens or parenthesis)!";
@@ -366,11 +366,11 @@ public class BookingPage extends JFrame {
 			case HYGIENIST_TYPE:
 				try {
 					error = c.addHygienist(personNameTextField.getText(),
-							Integer.parseInt(personPhoneTextField.getText()));
+							personPhoneTextField.getText());
 				} catch (NumberFormatException e) {
 					error = error
 							+ "Enter a valid phone number(no hyphens or parenthesis)!";
-				}
+				} 
 				break;
 			}
 		}

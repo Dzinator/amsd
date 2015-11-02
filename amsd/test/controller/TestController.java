@@ -28,7 +28,7 @@ public class TestController {
 		assertEquals(0, ams.getPatientProfiles().size());
 		
 		String name = "Oscar";
-		int number = 1234567;
+		String number = "1234567";
 		
 		Controller controller = new Controller();
 		String error = controller.addPatient(name, number);
@@ -49,7 +49,7 @@ public class TestController {
 
 		
 		String name = "Oscar";
-		int number = 1234567;
+		String number = "1234567";
 		
 		Controller controller = new Controller();
 		controller.addPatient(name, number);
@@ -71,7 +71,7 @@ public class TestController {
 		assertEquals(0, ams.getDentistProfiles().size());
 		
 		String name = "Oscar";
-		int number = 1234567;
+		String number = "1234567";
 		
 		Controller controller = new Controller();
 		String error = controller.addDentist(name, number);
@@ -90,7 +90,7 @@ public class TestController {
 		assertEquals(0, ams.getPatientProfiles().size());
 	
 		String name = "Oscar";
-		int number = 1234567;
+		String number = "1234567";
 		
 		Controller controller = new Controller();
 		String error = controller.addDentist(name, number);
@@ -111,7 +111,7 @@ public class TestController {
 		assertEquals(0, ams.getHygienistProfiles().size());
 	
 		String name = "Oscar";
-		int number = 1234567;
+		String number = "1234567";
 		
 		Controller controller = new Controller();
 		String error = controller.addDentist(name, number);
@@ -132,7 +132,7 @@ public class TestController {
 		assertEquals(0, ams.getDentistProfiles().size());
 		
 		String name = "Oscar";
-		int number = 1234567;
+		String number = "1234567";
 		
 		Controller controller = new Controller();
 		String error = controller.addDentist(name, number);
@@ -140,7 +140,7 @@ public class TestController {
 		
 		
 		
-		Date date = new Date(2016, 5, 3);
+		Date date = new Date(2016, 5, 6);
 		
 		controller.setAvailable("Oscar", date, true);
 		
@@ -164,21 +164,21 @@ public class TestController {
 	public void testMakeAppointment(){
 		AppointmentManagementSystem ams = AppointmentManagementSystem.getInstance();
 		String name = "Oscar";
-		int number = 1234567;
+		String number = "1234567";
 		
 		Controller controller = new Controller();
 		String error = controller.addDentist(name, number);
 		
 		name = "Dave";
-		number = 12345609;
+		number = "12345609";
 		
 		error = controller.addPatient(name, number);
 		
 		checkResultPatient(name, number, ams);
-		checkResultDentist("Oscar", 1234567, ams);
+		checkResultDentist("Oscar", "1234567", ams);
 		
 
-		Date date = new Date(2016, 5, 3);
+		Date date = new Date(2016, 5, 6);
 		
 		controller.setAvailable("Oscar", date, true);
 		
@@ -213,17 +213,17 @@ public class TestController {
 	public void testCancelAppointment(){
 		AppointmentManagementSystem ams = AppointmentManagementSystem.getInstance();
 		String name = "Oscar";
-		int number = 1234567;
+		String number = "1234567";
 		
 		Controller controller = new Controller();
 		controller.addDentist(name, number);
 		
 		name = "Dave";
-		number = 12345609;
+		number = "12345609";
 		
 		controller.addPatient(name, number);
 		
-		Date date = new Date(2016, 5, 3);
+		Date date = new Date(2016, 5, 6);
 		
 		controller.setAvailable("Oscar", date, true);
 		
@@ -248,17 +248,17 @@ public class TestController {
 	public void testMissAppointment(){
 		AppointmentManagementSystem ams = AppointmentManagementSystem.getInstance();
 		String name = "Oscar";
-		int number = 1234567;
+		String number = "1234567";
 		
 		Controller controller = new Controller();
 		controller.addDentist(name, number);
 		
 		name = "Dave";
-		number = 12345609;
+		number = "12345609";
 		
 		controller.addPatient(name, number);
 		
-		Date date = new Date(2016, 5, 3);
+		Date date = new Date(2016, 5, 6);
 		
 		controller.setAvailable("Oscar", date, true);
 		
@@ -286,13 +286,13 @@ public class TestController {
 	public void testPayFee(){
 		AppointmentManagementSystem ams = AppointmentManagementSystem.getInstance();
 		String name = "Oscar";
-		int number = 1234567;
+		String number = "1234567";
 		
 		Controller controller = new Controller();
 		controller.addDentist(name, number);
 		
 		name = "Dave";
-		number = 12345609;
+		number = "12345609";
 		
 		controller.addPatient(name, number);
 		
@@ -323,7 +323,7 @@ public class TestController {
 	
 	@Test
 	public void testRebookingCancelledAppointment(){
-		PersistenceAMSD.loadEventRegistrationModel("amsd.xml");
+		PersistenceAMSD.loadEventRegistrationModel("amsdTest.xml");
 		AppointmentManagementSystem ams = AppointmentManagementSystem.getInstance();
 		
 		Controller c = new Controller();
@@ -340,10 +340,10 @@ public class TestController {
 		assertEquals(0,ams.getPatientProfile(0).getAppointments().size());
 		assertEquals(0,ams.getAppointments().size());
 		
-		PersistenceAMSD.saveEventRegistrationModel("amsd1.xml");
+		PersistenceAMSD.saveEventRegistrationModel("amsdTest1.xml");
 		
 		ams.delete();
-		PersistenceAMSD.loadEventRegistrationModel("amsd1.xml");
+		PersistenceAMSD.loadEventRegistrationModel("amsdTest1.xml");
 
 		assertEquals(0,ams.getPatientProfile(0).getAppointments().size());
 		assertEquals(0,ams.getAppointments().size());
@@ -355,10 +355,10 @@ public class TestController {
 		
 		String error = c.cancelAppointment("mona", date, 8);
 		assertNull(error);
-		PersistenceAMSD.saveEventRegistrationModel("amsd1.xml");
+		PersistenceAMSD.saveEventRegistrationModel("amsdTest1.xml");
 	}
 	
-	private void checkResutHygienist(String name, int number,
+	private void checkResutHygienist(String name, String number,
 			AppointmentManagementSystem ams) {
 		assertEquals(1, ams.getHygienistProfiles().size());
 		assertTrue(ams.getHygienistProfile(0).getPerson().getName().equals(name));
@@ -367,14 +367,14 @@ public class TestController {
 	}
 
 
-	private void checkResultPatient(String name, int number,
+	private void checkResultPatient(String name, String number,
 			AppointmentManagementSystem ams) {
 		assertEquals(1, ams.getPatientProfiles().size());
 		assertTrue(ams.getPatientProfile(0).getPerson().getName().equals(name));
 		assertEquals(number,ams.getPatientProfile(0).getPerson().getPhoneNumber());
 	}
 	
-	private void checkResultDentist(String name, int number,
+	private void checkResultDentist(String name, String number,
 			AppointmentManagementSystem ams) {
 		assertEquals(1, ams.getDentistProfiles().size());
 		assertTrue(ams.getDentistProfile(0).getPerson().getName().equals(name));

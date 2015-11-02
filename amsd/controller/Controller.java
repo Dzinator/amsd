@@ -22,7 +22,7 @@ public class Controller {
 		ams = AppointmentManagementSystem.getInstance();
 	}
 	
-	public String addPatient(String name, int phoneNumber)
+	public String addPatient(String name, String phoneNumber)
 	{
 		if (name == null || name.trim().length() == 0)
 			return "Patient name cannot be empty!";
@@ -38,7 +38,7 @@ public class Controller {
 		return null;
 	}
 
-	private Person getPerson(String name, int phoneNumber) {
+	private Person getPerson(String name, String phoneNumber) {
 		List<Person> pList = ams.getPersons();
 		for(Person p : pList){
 			if(p.getName().equals(name))
@@ -59,7 +59,7 @@ public class Controller {
 	}
 	
 
-	public String addDentist(String name, int phoneNumber) {
+	public String addDentist(String name, String phoneNumber) {
 		if (name == null || name.trim().length() == 0)
 			return "Dentist name cannot be empty!";
 		Person p = getPerson(name, phoneNumber);
@@ -71,7 +71,7 @@ public class Controller {
 		return null;
 	}
 	
-	public String addHygienist(String name, int phoneNumber) {
+	public String addHygienist(String name, String phoneNumber) {
 		if (name == null || name.trim().length() == 0)
 			return "Hygienist name cannot be empty!";
 		Person p = getPerson(name, phoneNumber);
@@ -98,7 +98,7 @@ public class Controller {
 		Calendar c = Calendar.getInstance();
 		c.setTime(date);
 		int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-		if(dayOfWeek == 1 || dayOfWeek == 7) {
+		if(dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
 			return "No availabilties allowed on Weekends";
 		}
 		
@@ -286,7 +286,7 @@ public class Controller {
 	}
 
 	
-	public String updatePhoneNumber(String name, int number){
+	public String updatePhoneNumber(String name, String number){
 		Person person = getPerson(name);
 		if(person == null){
 			return "Person not found";

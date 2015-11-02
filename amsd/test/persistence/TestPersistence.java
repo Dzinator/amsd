@@ -21,8 +21,8 @@ public class TestPersistence {
 		
 		Controller controller = new Controller();
 		
-		controller.addPatient("Oscar", 1234567);
-		controller.addHygienist("Dave", 1236547);
+		controller.addPatient("Oscar", "1234567");
+		controller.addHygienist("Dave", "1236547");
 		
 		Date date = new Date(2016,4,2);
 		int time = 9;
@@ -49,7 +49,7 @@ public class TestPersistence {
 		// save model
 		AppointmentManagementSystem ams = AppointmentManagementSystem.getInstance();
 //		PersistenceAMSD pers = new PersistenceAMSD();
-		PersistenceAMSD.initializeXStream("amsd.xml");
+		PersistenceAMSD.initializeXStream("amsdPTest.xml");
 
 		if (!PersistenceXStream.saveToXMLwithXStream(ams))
 			fail("Could not save file.");
@@ -62,6 +62,8 @@ public class TestPersistence {
 		assertEquals(0,ams.getPatientProfiles().size());
 
 		// load model
+		
+		PersistenceXStream.setFilename("amsdPTest.xml");
 		
 		ams = (AppointmentManagementSystem) PersistenceXStream.loadFromXMLwithXStream();
 		if(ams == null){
@@ -78,32 +80,7 @@ public class TestPersistence {
 		assertTrue(ams.getHygienistProfile(0).getPerson().getName().equals("Dave"));
 		
 		assertEquals(1,ams.getPatientProfile(0).getMissedAppointments());
-//		rm = (RegistrationManager) PersistenceXStream.loadFromXMLwithXStream();
-//		if (rm == null)
-//			fail("Could not load file.");
-//		
-//		// check participants
-//		assertEquals(2, rm.getParticipants().size());
-//		assertEquals("Martin", rm.getParticipant(0).getName());
-//		assertEquals("Jennifer", rm.getParticipant(1).getName());
-//		// check event
-//		assertEquals(1, rm.getEvents().size());
-//		assertEquals("Concert", rm.getEvent(0).getName());
-//		Calendar c = Calendar.getInstance();
-//		c.set(2015,Calendar.SEPTEMBER,15,8,30,0);
-//		Date eventDate = new Date(c.getTimeInMillis());
-//		Time startTime = new Time(c.getTimeInMillis());
-//		c.set(2015,Calendar.SEPTEMBER,15,10,0,0);
-//		Time endTime = new Time(c.getTimeInMillis());
-//		assertEquals(eventDate.toString(), rm.getEvent(0).getEventDate().toString());
-//		assertEquals(startTime.toString(), rm.getEvent(0).getStartTime().toString());
-//		assertEquals(endTime.toString(), rm.getEvent(0).getEndTime().toString());
-//		// check registrations
-//		assertEquals(2, rm.getRegistrations().size());
-//		assertEquals(rm.getEvent(0), rm.getRegistration(0).getEvent());
-//		assertEquals(rm.getParticipant(0), rm.getRegistration(0).getParticipant());
-//		assertEquals(rm.getEvent(0), rm.getRegistration(1).getEvent());
-//		assertEquals(rm.getParticipant(1), rm.getRegistration(1).getParticipant());
+
 	}
 
 }

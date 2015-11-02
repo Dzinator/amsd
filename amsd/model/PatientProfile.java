@@ -6,7 +6,7 @@ import amsd.controller.*;
 import java.util.*;
 import java.sql.Date;
 
-// line 27 "../../model.ump"
+// line 34 "../../model.ump"
 public class PatientProfile
 {
 
@@ -48,6 +48,10 @@ public class PatientProfile
   public boolean setMissedAppointments(int aMissedAppointments)
   {
     boolean wasSet = false;
+    // line 39 "../../model.ump"
+    if( aMissedAppointments < 0){
+         		return false;
+         	}
     missedAppointments = aMissedAppointments;
     wasSet = true;
     return wasSet;
@@ -71,7 +75,7 @@ public class PatientProfile
 
   public boolean miss(Appointment app)
   {
-    // line 52 "../../model.ump"
+    // line 64 "../../model.ump"
     missedAppointments++; 
       			app.miss();
     boolean wasEventProcessed = false;
@@ -96,7 +100,7 @@ public class PatientProfile
 
   public boolean payFee(Appointment app)
   {
-    // line 56 "../../model.ump"
+    // line 68 "../../model.ump"
     missedAppointments--;
       			app.payfee();
     boolean wasEventProcessed = false;
@@ -274,7 +278,7 @@ public class PatientProfile
     }
   }
 
-  // line 35 "../../model.ump"
+  // line 47 "../../model.ump"
    public Appointment getAppointment(Date date, int time){
     for(Appointment app : getAppointments()){
 		  if(Controller.datesEqual(app.getDate(),date) && app.getTime() == time){

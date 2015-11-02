@@ -6,7 +6,7 @@ import amsd.controller.*;
 import java.util.*;
 import java.sql.Date;
 
-// line 65 "../../model.ump"
+// line 77 "../../model.ump"
 public class EmployeeProfile
 {
 
@@ -299,7 +299,7 @@ public class EmployeeProfile
     }
   }
 
-  // line 73 "../../model.ump"
+  // line 85 "../../model.ump"
    public Availability getAvailability(Date date, int time){
     for(Availability avail : getAvailabilities()){
 		  if(Controller.datesEqual(date,avail.getDate()) && avail.getTime() == time){
@@ -309,7 +309,7 @@ public class EmployeeProfile
 	  return null;
   }
 
-  // line 82 "../../model.ump"
+  // line 94 "../../model.ump"
    public Appointment getAppointment(Date date, int time){
     for(Appointment app : getAppointments()){
 		  if(Controller.datesEqual(app.getDate(),date) && app.getTime() == time){

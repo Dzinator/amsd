@@ -13,7 +13,7 @@ public class Person
 
   //Person Attributes
   private String name;
-  private int phoneNumber;
+  private String phoneNumber;
 
   //Person Associations
   private PatientProfile patientProfile;
@@ -23,7 +23,7 @@ public class Person
   // CONSTRUCTOR
   //------------------------
 
-  public Person(String aName, int aPhoneNumber)
+  public Person(String aName, String aPhoneNumber)
   {
     name = aName;
     phoneNumber = aPhoneNumber;
@@ -36,12 +36,15 @@ public class Person
   public boolean setName(String aName)
   {
     boolean wasSet = false;
+    // line 21 "../../model.ump"
+    if (aName == null) {
+    			return false; }
     name = aName;
     wasSet = true;
     return wasSet;
   }
 
-  public boolean setPhoneNumber(int aPhoneNumber)
+  public boolean setPhoneNumber(String aPhoneNumber)
   {
     boolean wasSet = false;
     phoneNumber = aPhoneNumber;
@@ -54,7 +57,7 @@ public class Person
     return name;
   }
 
-  public int getPhoneNumber()
+  public String getPhoneNumber()
   {
     return phoneNumber;
   }

@@ -17,7 +17,14 @@ class AppointmentManagementSystem
 
 class Person {
      name;
-     Integer phoneNumber;
+     
+     before setName {
+     if (aName == null) {
+			return false; }
+     }
+     
+     
+  	 phoneNumber;
      1 -- 0..1 PatientProfile;
      1 -- 0..1 EmployeeProfile;
 }
@@ -29,6 +36,11 @@ class PatientProfile
 {
 	depend amsd.controller.*;
      Integer missedAppointments;
+     before setMissedAppointments {
+     	if( aMissedAppointments < 0){
+     		return false;
+     	}
+     }
      1 -- * Appointment;
 
 	public Appointment getAppointment(Date date, int time){
