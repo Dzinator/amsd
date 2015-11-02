@@ -25,9 +25,6 @@ public class PersistenceAMSD {
 		AppointmentManagementSystem apms2 = (AppointmentManagementSystem) PersistenceXStream.loadFromXMLwithXStream();
 		if (apms2 != null) {
 			//TODO might need to add support for availabilities
-			Iterator<Appointment> apIt = apms2.getAppointments().iterator();
-			while (apIt.hasNext())
-				apms.addAppointment(apIt.next());
 			Iterator<Person> pIt = apms2.getPersons().iterator();
 			while (pIt.hasNext())
 				apms.addPerson(pIt.next());
@@ -45,6 +42,9 @@ public class PersistenceAMSD {
 			Iterator<HygienistProfile> hpIt = apms2.getHygienistProfiles().iterator();
 			while (hpIt.hasNext())
 				apms.addHygienistProfile(hpIt.next());
+			Iterator<Appointment> apIt = apms2.getAppointments().iterator();
+			while (apIt.hasNext())
+				apms.addAppointment(apIt.next());
 		}
 	}
 
