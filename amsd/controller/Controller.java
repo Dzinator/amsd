@@ -2,6 +2,7 @@ package amsd.controller;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import amsd.model.Appointment;
@@ -91,6 +92,14 @@ public class Controller {
 		EmployeeProfile profile = p.getEmployeeProfile();
 		if(profile == null){
 			return "No employee profile";
+		}
+		
+		//check if it's Saturday or Sunday and refuse to take availability
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+		if(dayOfWeek == 1 || dayOfWeek == 7) {
+			return "No availabilties allowed on Weekends";
 		}
 		
 		boolean alreadyBookedOnDay = false;
