@@ -112,6 +112,11 @@ public class BookingPage extends JFrame {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				JComboBox<String> cb = (JComboBox<String>) evt.getSource();
 				selectedPersonType = cb.getSelectedIndex();
+				//gray visit time if its not patient
+				if(selectedPersonType != 0)
+					visitTimeList.setEnabled(false);
+				else
+					visitTimeList.setEnabled(true);
 				refreshPersonList();
 				refreshActionList();
 				
