@@ -422,6 +422,8 @@ public class BookingPage extends JFrame {
 		error = "";
 		if (selectedPatient < 0)
 			error = error + "A person needs to be selected! ";
+		if (personPhoneTextField.getText().length() == 0)
+			error = error + "A phone number must be entered! ";
 		
 		error = error.trim();
 		if (error.length() == 0) {
