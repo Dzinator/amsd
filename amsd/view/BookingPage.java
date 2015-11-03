@@ -335,7 +335,7 @@ public class BookingPage extends JFrame {
 		// whether an error message is shown or not
 		pack();
 		
-		MainWindow.getInstance().refresh();
+		AppointmentWindow.getInstance().refresh();
 	}
 
 	private void addPersonButtonActionPerformed(java.awt.event.ActionEvent evt) {

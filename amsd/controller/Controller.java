@@ -322,4 +322,20 @@ public class Controller {
 				&& date1.getYear() == date2.getYear();
 	}
 
+	public String attendAppointment(String name, Date date, int time) {
+		PatientProfile patient = getPatient(name);
+		if (patient == null) {
+			return "No patient profile found";
+		}
+
+		Appointment app = patient.getAppointment(date, time);
+		if (app == null) {
+			return "Appointment not found";
+		}
+
+		app.attend();
+
+		return null;
+	}
+
 }

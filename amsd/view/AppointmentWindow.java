@@ -17,10 +17,10 @@ import javax.swing.ListSelectionModel;
 import amsd.model.*;
 import amsd.controller.*;
 
-public class MainWindow extends JFrame{
+public class AppointmentWindow extends JFrame{
 
 	private static final long serialVersionUID = 5174491816909068789L;
-	static MainWindow theInstance;
+	static AppointmentWindow theInstance;
 	private JTable table;
 	private AppointmentManagementSystem ams;
 	
@@ -29,16 +29,16 @@ public class MainWindow extends JFrame{
 	
 	int nbRows = 0;
 	
-	private MainWindow() {
+	private AppointmentWindow() {
 		initialize();
 		//refresh();
 	}
 	
-	public static MainWindow getInstance()
+	public static AppointmentWindow getInstance()
 	  {
 	    if(theInstance == null)
 	    {
-	      theInstance = new MainWindow();
+	      theInstance = new AppointmentWindow();
 	    }
 	    return theInstance;
 	  }
@@ -283,12 +283,11 @@ public class MainWindow extends JFrame{
 		}
 		try {
 			Appointment a = ams.getAppointment(selectedAppointment  + (ams.getAppointments().size() - nbRows));
-			//TODO replace the commented call with the attend call
-			/*
-			result = c.missAppointment(a.getPatientProfile().getPerson().getName(), 
+			
+			result = c.attendAppointment(a.getPatientProfile().getPerson().getName(), 
 								a.getDate(), 
 								a.getTime());
-			*/
+			
 		} catch (NullPointerException e) {
 			result = "Appointment couldn't be attended!";
 			JOptionPane.showMessageDialog(this, result);
