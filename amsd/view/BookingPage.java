@@ -33,6 +33,7 @@ public class BookingPage extends JFrame {
 	private JTextField personNameTextField;
 	private JLabel personNameLabel;
 	private JButton addPersonButton; // add button
+	private JButton updatePhoneNbButton;
 	private JTextField personPhoneTextField;
 	private JLabel personPhoneLabel;
 
@@ -122,14 +123,14 @@ public class BookingPage extends JFrame {
 		personTypeLabel = new JLabel();
 
 		bookButton = new JButton();
+		addPersonButton = new JButton();
+		updatePhoneNbButton = new JButton();
 
 		// elements for adding a person
 		personNameTextField = new JTextField();
 		personNameLabel = new JLabel();
 		personPhoneTextField = new JTextField();
 		personPhoneLabel = new JLabel();
-
-		addPersonButton = new JButton();
 
 		SqlDateModel model = new SqlDateModel();
 		Properties p = new Properties();
@@ -159,6 +160,13 @@ public class BookingPage extends JFrame {
 		addPersonButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				addPersonButtonActionPerformed(evt);
+			}
+		});
+		
+		updatePhoneNbButton.setText("Update Phone");
+		updatePhoneNbButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				updatePhoneButtonActionPerformed(evt);
 			}
 		});
 
@@ -201,7 +209,8 @@ public class BookingPage extends JFrame {
 														200, 200, 400)
 												.addComponent(
 														personPhoneTextField,
-														200, 200, 400))
+														200, 200, 400)
+												.addComponent(updatePhoneNbButton))
 								.addGroup(
 										layout.createParallelGroup()
 												.addComponent(visitTypeLabel)
@@ -248,8 +257,8 @@ public class BookingPage extends JFrame {
 								.addComponent(personPhoneLabel)
 								.addComponent(personPhoneTextField))
 				.addGroup(
-						layout.createParallelGroup().addComponent(
-								addPersonButton)));
+						layout.createParallelGroup().addComponent(updatePhoneNbButton)
+													.addComponent(addPersonButton)));
 
 		pack();
 	}
@@ -408,4 +417,23 @@ public class BookingPage extends JFrame {
 		refreshData();
 	}
 
+	private void updatePhoneButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		//update phone number of selected person
+		error = "";
+		if (selectedPatient < 0)
+			error = error + "A person needs to be selected! ";
+		
+		error = error.trim();
+		if (error.length() == 0) {
+			// call the controller
+			Controller c = new Controller();
+			
+			String name = personList.getItemAt(selectedPatient);
+			error = c.updatePhoneNumber(name, personPhoneTextField.getText());
+			
+			
+		}
+		// update visuals
+		refreshData();
+	}
 }

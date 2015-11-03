@@ -129,15 +129,21 @@ public class MainWindow extends JFrame{
 				miss();
 			}
 		});
-		getContentPane().add(refreshButton, BorderLayout.NORTH);
+		JButton attendButton = new JButton("Attend");
+		attendButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				attend();
+			}
+		});
 		
 		JPanel buttons = new JPanel();
 		buttons.setLayout(new FlowLayout());
 		buttons.add(cancelButton);
+		buttons.add(attendButton);
 		buttons.add(missButton);
 		buttons.add(payButton);
 		
-		
+		getContentPane().add(refreshButton, BorderLayout.NORTH);
 		getContentPane().add(buttons, BorderLayout.SOUTH);
 		
 		
@@ -249,6 +255,48 @@ public class MainWindow extends JFrame{
 		}
 		if(result == null) {
 			result = "Appointment successfully missed!";
+			JOptionPane.showMessageDialog(this, result);
+			refresh();
+			return;
+		}
+		result.trim();
+		if(result.length() > 0) {
+			JOptionPane.showMessageDialog(this, result);
+		}
+		
+		refresh();
+	}
+	
+	private void attend() {
+		/*
+		 * Attend selected appointment
+		 */
+		String result = "";
+		Controller c = new Controller();
+		
+		int selectedAppointment = table.getSelectedRow();
+		if(selectedAppointment < 0 || selectedAppointment >= nbRows) {
+			result = "Please select an appointment";
+			JOptionPane.showMessageDialog(this, result);
+			refresh();
+			return;
+		}
+		try {
+			Appointment a = ams.getAppointment(selectedAppointment  + (ams.getAppointments().size() - nbRows));
+			//TODO replace the commented call with the attend call
+			/*
+			result = c.missAppointment(a.getPatientProfile().getPerson().getName(), 
+								a.getDate(), 
+								a.getTime());
+			*/
+		} catch (NullPointerException e) {
+			result = "Appointment couldn't be attended!";
+			JOptionPane.showMessageDialog(this, result);
+			refresh();
+			return;
+		}
+		if(result == null) {
+			result = "Appointment successfully attended!";
 			JOptionPane.showMessageDialog(this, result);
 			refresh();
 			return;
